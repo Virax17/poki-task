@@ -38,18 +38,18 @@ export interface RawPokemon {
   name: string;
   height: number;
   weight: number;
-  pokemon_v2_pokemontypes: { pokemon_v2_type: { name: string } }[];
-  pokemon_v2_pokemonstats: {
+  pokemontypes: { type: { name: string } }[];
+  pokemonstats: {
     base_stat: number;
-    pokemon_v2_stat: { name: string };
+    stat: { name: string };
   }[];
-  pokemon_v2_pokemonsprites: { sprites: unknown }[];
+  pokemonsprites: { sprites: unknown }[];
 }
 
 export interface RawAbility {
   is_hidden: boolean;
-  pokemon_v2_ability: {
+  ability: {
     name: string;
-    pokemon_v2_abilityeffecttexts: { short_effect: string }[];
+    abilityeffecttexts: { short_effect: string }[];
   };
 }

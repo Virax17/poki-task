@@ -30,7 +30,10 @@ npm test -- --watch=false   # unit tests (Vitest via Angular builder)
 npm run build               # production build
 ```
 
-> Pokémon data comes from `https://beta.pokeapi.co/graphql/v1beta` (no auth). Teams need the mock server on port 4000;
+> Pokémon data comes from `https://graphql.pokeapi.co/v1beta2` (no auth), the maintained successor of the brief's
+> `beta.pokeapi.co/graphql/v1beta`, which was unreachable while building. Same data and operations; the only difference is
+> that field names drop the `pokemon_v2_` prefix. To use the original, change `POKEAPI_GRAPHQL_URL` in
+> `src/app/common/constants/constants.ts` and restore the prefixed field names in `pokemon-api.service.ts`. Teams need the mock server on port 4000;
 > without it the Teams page shows its error state with a Retry button.
 
 ## Architecture

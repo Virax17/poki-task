@@ -32,12 +32,12 @@ export function mapPokemon(raw: RawPokemon): Pokemon {
     StatKey,
     number
   >;
-  for (const stat of raw.pokemon_v2_pokemonstats) {
-    const key = stat.pokemon_v2_stat.name as StatKey;
+  for (const stat of raw.pokemonstats) {
+    const key = stat.stat.name as StatKey;
     if (key in stats) stats[key] = stat.base_stat;
   }
 
-  const sprites = parseSprites(raw.pokemon_v2_pokemonsprites[0]?.sprites);
+  const sprites = parseSprites(raw.pokemonsprites[0]?.sprites);
   const other = sprites['other'] as
     | Record<string, Record<string, unknown>>
     | undefined;
@@ -48,7 +48,7 @@ export function mapPokemon(raw: RawPokemon): Pokemon {
     name: raw.name,
     height: raw.height,
     weight: raw.weight,
-    types: raw.pokemon_v2_pokemontypes.map((t) => t.pokemon_v2_type.name),
+    types: raw.pokemontypes.map((t) => t.type.name),
     stats,
     total: STAT_KEYS.reduce((sum, key) => sum + stats[key], 0),
     spriteUrl: readString(sprites['front_default']) ?? fallback,
@@ -61,9 +61,9 @@ export function mapPokemon(raw: RawPokemon): Pokemon {
 /** Maps a raw GraphQL ability row into the app model. */
 export function mapAbility(raw: RawAbility): PokemonAbility {
   return {
-    name: raw.pokemon_v2_ability.name,
+    name: raw.ability.name,
     shortEffect:
-      raw.pokemon_v2_ability.pokemon_v2_abilityeffecttexts[0]?.short_effect ?? null,
+      raw.ability.abilityeffecttexts[0]?.short_effect ?? null,
     isHidden: raw.is_hidden,
   };
 }

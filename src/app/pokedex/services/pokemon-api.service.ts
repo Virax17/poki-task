@@ -15,25 +15,25 @@ const POKEMON_FIELDS = /* GraphQL */ `
   name
   height
   weight
-  pokemon_v2_pokemontypes {
-    pokemon_v2_type {
+  pokemontypes {
+    type {
       name
     }
   }
-  pokemon_v2_pokemonstats {
+  pokemonstats {
     base_stat
-    pokemon_v2_stat {
+    stat {
       name
     }
   }
-  pokemon_v2_pokemonsprites {
+  pokemonsprites {
     sprites
   }
 `;
 
 const GET_POKEMON = /* GraphQL */ `
   query GetPokemon($limit: Int, $offset: Int) {
-    pokemon_v2_pokemon(
+    pokemon(
       limit: $limit
       offset: $offset
       order_by: { id: asc }
@@ -46,7 +46,7 @@ const GET_POKEMON = /* GraphQL */ `
 
 const SEARCH_POKEMON = /* GraphQL */ `
   query SearchPokemon($pattern: String, $limit: Int) {
-    pokemon_v2_pokemon(
+    pokemon(
       limit: $limit
       order_by: { id: asc }
       where: { name: { _ilike: $pattern }, id: { _lt: ${MAX_SPECIES_ID} } }
@@ -58,7 +58,7 @@ const SEARCH_POKEMON = /* GraphQL */ `
 
 const GET_POKEMON_BY_IDS = /* GraphQL */ `
   query GetPokemonByIds($ids: [Int!]) {
-    pokemon_v2_pokemon(where: { id: { _in: $ids } }, order_by: { id: asc }) {
+    pokemon(where: { id: { _in: $ids } }, order_by: { id: asc }) {
       ${POKEMON_FIELDS}
     }
   }
@@ -66,10 +66,10 @@ const GET_POKEMON_BY_IDS = /* GraphQL */ `
 
 const GET_ABILITIES = /* GraphQL */ `
   query GetAbilities($pokemonId: Int) {
-    pokemon_v2_pokemonability(where: { pokemon_id: { _eq: $pokemonId } }) {
-      pokemon_v2_ability {
+    pokemonability(where: { pokemon_id: { _eq: $pokemonId } }) {
+      ability {
         name
-        pokemon_v2_abilityeffecttexts(where: { language_id: { _eq: 9 } }) {
+        abilityeffecttexts(where: { language_id: { _eq: 9 } }) {
           short_effect
         }
       }
@@ -79,11 +79,11 @@ const GET_ABILITIES = /* GraphQL */ `
 `;
 
 interface PokemonListData {
-  pokemon_v2_pokemon: RawPokemon[];
+  pokemon: RawPokemon[];
 }
 
 interface AbilitiesData {
-  pokemon_v2_pokemonability: RawAbility[];
+  pokemonability: RawAbility[];
 }
 
 /** PokéAPI GraphQL access. Every call retries with a delay before surfacing an error. */
@@ -101,7 +101,7 @@ export class PokemonApiService {
       .execute$<PokemonListData>(POKEAPI_GRAPHQL_URL, GET_POKEMON, { limit, offset })
       .pipe(
         retryWithDelay(),
-        map((data) => data.pokemon_v2_pokemon.map(mapPokemon)),
+        map((data) => data.pokemon.map(mapPokemon)),
       );
   }
 
@@ -117,7 +117,7 @@ export class PokemonApiService {
       })
       .pipe(
         retryWithDelay(),
-        map((data) => data.pokemon_v2_pokemon.map(mapPokemon)),
+        map((data) => data.pokemon.map(mapPokemon)),
       );
   }
 
@@ -130,7 +130,7 @@ export class PokemonApiService {
       .execute$<PokemonListData>(POKEAPI_GRAPHQL_URL, GET_POKEMON_BY_IDS, { ids })
       .pipe(
         retryWithDelay(),
-        map((data) => data.pokemon_v2_pokemon.map(mapPokemon)),
+        map((data) => data.pokemon.map(mapPokemon)),
       );
   }
 
@@ -143,7 +143,7 @@ export class PokemonApiService {
       .execute$<AbilitiesData>(POKEAPI_GRAPHQL_URL, GET_ABILITIES, { pokemonId })
       .pipe(
         retryWithDelay(),
-        map((data) => data.pokemon_v2_pokemonability.map(mapAbility)),
+        map((data) => data.pokemonability.map(mapAbility)),
       );
   }
 }
