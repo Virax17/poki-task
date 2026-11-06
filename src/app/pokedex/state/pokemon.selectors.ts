@@ -87,6 +87,35 @@ export function selectSorted$(state$: Observable<PokemonState>): Observable<Poke
   ]).pipe(map(([items, key, dir]) => sortPokemon(items, key, dir)));
 }
 
+export interface PokemonPool {
+  status: ViewStatus;
+  error: string | null;
+  pokemon: Pokemon[];
+}
+
+/** Browse list (unfiltered) with a load status, used by features such as the game. */
+export function selectPool$(state$: Observable<PokemonState>): Observable<PokemonPool> {
+  return state$.pipe(
+    map((s) => ({ status: s.status, error: s.error, listIds: s.listIds, byId: s.byId })),
+    distinctUntilChanged(
+      (a, b) => a.status === b.status && a.error === b.error && a.listIds === b.listIds,
+    ),
+    map(({ status, error, listIds, byId }): PokemonPool => {
+      const pokemon = listIds.map((id) => byId[id]).filter((p): p is Pokemon => !!p);
+      const viewStatus: ViewStatus =
+        status === 'error'
+          ? 'error'
+          : status === 'success'
+            ? pokemon.length === 0
+              ? 'empty'
+              : 'success'
+            : 'loading';
+      return { status: viewStatus, error, pokemon };
+    }),
+    shareReplay({ bufferSize: 1, refCount: true }),
+  );
+}
+
 /**
  * Builds the complete Pokédex view model (filtered → sorted → paged).
  * `shareReplay(1)` lets several template bindings share one computation.

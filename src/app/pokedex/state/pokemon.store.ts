@@ -20,7 +20,7 @@ import { POKEMON_FETCH_LIMIT } from '../constants/pokedex.constants';
 import { PokedexView, PokemonState } from '../models/pokemon-state.model';
 import { Pokemon, PokemonAbility, SortKey } from '../models/pokemon.model';
 import { PokemonApiService } from '../services/pokemon-api.service';
-import { selectPokedexView$ } from './pokemon.selectors';
+import { PokemonPool, selectPokedexView$, selectPool$ } from './pokemon.selectors';
 
 export const INITIAL_POKEMON_STATE: PokemonState = {
   byId: {},
@@ -57,6 +57,9 @@ export class PokemonStore {
 
   /** View model (filtered → sorted → paged) for the Pokédex page. */
   readonly view$: Observable<PokedexView> = selectPokedexView$(this.state$);
+
+  /** Browse list with load status (used by the game). */
+  readonly pool$: Observable<PokemonPool> = selectPool$(this.state$);
 
   constructor() {
     this.wireSearch();
