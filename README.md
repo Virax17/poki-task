@@ -1,59 +1,83 @@
-# MiniPokedex
+# Mini Pokédex
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.29.
+A single-page Angular 21 app to browse Pokémon (PokéAPI GraphQL) and build teams (local mock GraphQL server).
+Built to the conventions in `DEVELOPER_GUIDE.md` and the "Mini Pokédex" assessment brief.
 
-## Development server
+## Setup
 
-To start a local development server, run:
-
-```bash
-ng serve
-```
-
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+Requirements: Node 20+ and npm.
 
 ```bash
-ng generate component component-name
+npm install
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+Run the **mock server** (teams: queries + mutations) in one terminal:
 
 ```bash
-ng generate --help
+npm run mock        # json-graphql-server db.js --port 4000
 ```
 
-## Building
-
-To build the project run:
+Run the app in another terminal:
 
 ```bash
-ng build
+npm start           # ng serve  ->  http://localhost:4200
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+Other scripts:
 
 ```bash
-ng test
+npm test -- --watch=false   # unit tests (Vitest via Angular builder)
+npm run build               # production build
 ```
 
-## Running end-to-end tests
+> Pokémon data comes from `https://beta.pokeapi.co/graphql/v1beta` (no auth). Teams need the mock server on port 4000;
+> without it the Teams page shows its error state with a Retry button.
 
-For end-to-end (e2e) testing, run:
+## Architecture
 
-```bash
-ng e2e
+```
+src/app/
+  common/        shared UI (skeleton, state-message, pagination, type-badge, toasts), utils, constants, cache service
+  core/          GraphqlClientService, LoggerService, ToastService
+  pokedex/       models/ constants/ services/ state/ utils/ components/ + pokedex.component (page)
+  teams/         models/ constants/ services/ state/ utils/ validators/ components/ + teams.component (page)
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+- **GraphQL**: `GraphqlClientService` posts operations and converts every failure into a user-friendly `ApiError`
+  (raw HTTP/GraphQL details are only logged). PokéAPI calls use `retryWithDelay()` (3 retries, 1s/2s/3s).
+- **State (RxJS, no NgRx)**: `PokemonStore` and `TeamStore` hold a `BehaviorSubject` of state and expose derived
+  streams through selector functions (`map` + `distinctUntilChanged` + `combineLatest`, `shareReplay(1)` on view models).
+  - Pokémon search: `debounceTime(300) → distinctUntilChanged → switchMap` to the API.
+  - Fetched Pokémon are cached by id and reused by the table, team picker and team summary.
+  - Teams: create/delete are **optimistic**. The new team appears instantly (flagged *pending*), is swapped for the
+    server copy on success, and is removed (with an error toast) on failure. Delete restores the item at its old index.
+- **Signals**: UI state (`selectedPokemon`, `isPanelOpen`, `selectedTeamId`, form flags) uses `signal()`;
+  `computed()` for derived values (team type distribution / total base stats, skeleton row count, pagination ranges);
+  `toSignal()` bridges store selectors into templates; `effect()` persists the selected team to `localStorage`.
+  Components are standalone, `OnPush`, use `inject()`, `input()` and `output()`.
+- **UI states**: every async view (table, detail abilities, team list, team summary, typeahead dropdown) renders
+  loading (skeleton, sized to avoid layout jumps), empty, error (message + Retry) and success.
+- **Detail panel**: slide-in panel with an ECharts radar chart that animates between Pokémon.
+- **Forms**: reactive team form with required / 3–30 chars / debounced async unique-name validator, chips for 1–6 Pokémon,
+  errors only after a field is dirty/touched (or after a submit attempt).
 
-## Additional Resources
+### Notes / decisions
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+- The Pokédex loads Pokémon in chunks of 150 (`Load more` button) because sorting by a stat needs the data client-side;
+  pagination (10 / 25 / 50) is client-side over everything loaded so far. Form variants (id ≥ 10000) are excluded.
+- The mock backend has no auth, so every new team belongs to trainer `1` (Ash).
+- `ngx-echarts` was skipped (peer-dependency conflict with Angular 21); ECharts is used directly in `StatRadarChartComponent`.
+
+## Tests
+
+`npm test -- --watch=false` runs unit tests covering: optimistic create success, rollback on failure and delete restore
+(`team.store.spec.ts`), pokedex selectors incl. filter/sort/paging/status (`pokemon.selectors.spec.ts`),
+form validators (`team-name.validator.spec.ts`) and team stats computations (`team-stats.util.spec.ts`).
+
+## What I'd improve with more time
+
+- Component tests (table, picker, form) and an e2e pass that throttles / cuts the network.
+- Server-side sorting and filtering (or virtual scroll) instead of loading chunks and sorting on the client.
+- Keyboard navigation (arrow keys / Enter) for the typeahead listbox and focus trapping in the detail panel.
+- commitlint + husky hooks to enforce the Conventional Commits format automatically.
+- Persist teams per trainer and add edit support.
