@@ -1,0 +1,16 @@
+@use '../../styles/shared';
+
+:host {
+  display: inline-block;
+  max-width: 100%;
+}
+
+.skeleton {
+  @extend %sk-shimmer;
+  display: block;
+  border-radius: 6px;
+
+  &--circle {
+    border-radius: 50%;
+  }
+}

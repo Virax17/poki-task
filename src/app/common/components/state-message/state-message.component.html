@@ -1,0 +1,23 @@
+<div
+  class="state-message"
+  [class.state-message--error]="kind() === 'error'"
+  [attr.role]="kind() === 'error' ? 'alert' : 'status'"
+>
+  <img
+    [src]="kind() === 'error' ? 'assets/icons/ic_alert.svg' : 'assets/icons/ic_inbox.svg'"
+    width="32"
+    height="32"
+    alt=""
+    aria-hidden="true"
+  />
+  @if (title()) {
+    <p class="state-message__title">{{ title() }}</p>
+  }
+  <p class="state-message__text">{{ message() }}</p>
+  @if (kind() === 'error') {
+    <button type="button" class="state-message__retry" (click)="onRetry()">
+      <img src="assets/icons/ic_retry.svg" width="16" height="16" alt="" aria-hidden="true" />
+      Retry
+    </button>
+  }
+</div>

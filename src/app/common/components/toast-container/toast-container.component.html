@@ -1,0 +1,14 @@
+<div class="toasts" aria-live="polite">
+  @for (toast of toastService.toasts(); track toast.id) {
+    <div
+      class="toasts__item"
+      [class.toasts__item--error]="toast.kind === 'error'"
+      [attr.role]="toast.kind === 'error' ? 'alert' : 'status'"
+    >
+      <span>{{ toast.message }}</span>
+      <button type="button" aria-label="Dismiss" (click)="toastService.dismiss(toast.id)">
+        <img src="assets/icons/ic_close.svg" width="14" height="14" alt="" aria-hidden="true" />
+      </button>
+    </div>
+  }
+</div>

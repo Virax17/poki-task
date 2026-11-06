@@ -1,1 +1,65 @@
-/* You can add global styles to this file, and also import other style files */
+// Global design tokens (see DEVELOPER_GUIDE.md §6 / §9)
+:root {
+  --color-primary: #ef5350;
+  --color-secondary: #6c757d;
+  --color-accent: #ffb414;
+  --color-success: #2ecc71;
+  --color-danger: #ff5c5c;
+  --color-warning: #ffc107;
+  --color-surface: #131515;
+  --color-surface-2: #1e2121;
+  --color-surface-3: #272b2b;
+  --color-surface-overlay: rgba(19, 21, 21, 0.75);
+  --color-border: rgba(255, 255, 255, 0.1);
+  --color-text-muted: rgba(255, 255, 255, 0.62);
+  --panel-width: 393px;
+  --backdrop-blur: blur(16px);
+  --radius: 10px;
+  --font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  background-color: #111212;
+}
+
+body {
+  color-scheme: dark;
+  background-color: var(--color-surface, #131515);
+  color: #ffffff;
+  margin: 0;
+  min-height: 100vh;
+  font-family: var(--font-family);
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+button,
+input,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

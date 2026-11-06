@@ -1,0 +1,63 @@
+// Shared SCSS helpers (DEVELOPER_GUIDE.md §9)
+
+// Skeleton shimmer animation
+%sk-shimmer {
+  animation: sk-shimmer 1.6s infinite;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.05),
+    rgba(255, 255, 255, 0.1),
+    rgba(255, 255, 255, 0.05)
+  );
+  background-size: 200% 100%;
+}
+
+@keyframes sk-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+// Scrollbar styling
+@mixin custom-scrollbar($color: rgba(255, 255, 255, 0.2)) {
+  scrollbar-width: thin;
+  scrollbar-color: $color transparent;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: $color;
+    border-radius: 4px;
+  }
+}
+
+// Shared button look used across feature pages
+@mixin button($bg: var(--color-surface-3)) {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: $bg;
+  transition: filter 0.15s ease;
+
+  &:hover:not(:disabled) {
+    filter: brightness(1.2);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}

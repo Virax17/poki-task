@@ -1,0 +1,30 @@
+@use '../../styles/shared';
+
+.pagination {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 4px;
+  color: var(--color-text-muted);
+
+  &__size select {
+    margin-left: 6px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    border: 1px solid var(--color-border);
+    background: var(--color-surface-2);
+  }
+
+  &__buttons {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    button {
+      @include shared.button();
+      padding: 4px 12px;
+    }
+  }
+}
