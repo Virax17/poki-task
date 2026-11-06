@@ -1,23 +1,15 @@
 import { TestBed } from '@angular/core/testing';
-import { App } from './app';
+import { provideRouter } from '@angular/router';
+import { describe, expect, it } from 'vitest';
+import { AppComponent } from './app.component';
 
-describe('App', () => {
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [App],
-    }).compileComponents();
-  });
+describe('AppComponent', () => {
+  it('renders the header navigation', () => {
+    TestBed.configureTestingModule({ providers: [provideRouter([])] });
+    const fixture = TestBed.createComponent(AppComponent);
+    fixture.detectChanges();
 
-  it('should create the app', () => {
-    const fixture = TestBed.createComponent(App);
-    const app = fixture.componentInstance;
-    expect(app).toBeTruthy();
-  });
-
-  it('should render title', async () => {
-    const fixture = TestBed.createComponent(App);
-    await fixture.whenStable();
-    const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, mini-pokedex');
+    const links = fixture.nativeElement.querySelectorAll('.app-header__nav a');
+    expect(links.length).toBe(2);
   });
 });
