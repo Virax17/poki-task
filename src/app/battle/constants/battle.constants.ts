@@ -38,6 +38,8 @@ export const MOVES: Readonly<Record<MoveId, Move>> = {
 export const MOVE_ORDER: readonly MoveId[] = ['quick', 'strike', 'blast', 'guard'];
 
 export const FIGHTER_CHOICES = 8;
+/** Opponents are picked within this base-stat-total distance of the player's fighter when possible. */
+export const MATCHMAKING_RANGE = 120;
 export const CRIT_CHANCE = 1 / 12;
 export const CRIT_MULTIPLIER = 1.5;
 export const GUARD_HEAL_RATIO = 0.12;

@@ -13,6 +13,10 @@ export const routes: Routes = [
     path: 'game',
     loadChildren: () => import('./game/game.routes').then((m) => m.gameRoutes),
   },
+  {
+    path: 'battle',
+    loadChildren: () => import('./battle/battle.routes').then((m) => m.battleRoutes),
+  },
   { path: '', redirectTo: 'pokedex', pathMatch: 'full' },
   { path: '**', redirectTo: 'pokedex' },
 ];

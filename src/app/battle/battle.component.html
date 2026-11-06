@@ -1,0 +1,105 @@
+<section class="battle">
+  <h1 class="battle__title">Battle</h1>
+
+  @switch (status()) {
+    @case ('loading') {
+      <div class="battle__panel" aria-busy="true">
+        <app-skeleton width="200px" height="20px" />
+        <div class="battle__choices">
+          @for (n of [1, 2, 3, 4, 5, 6, 7, 8]; track n) {
+            <app-skeleton width="100%" height="150px" />
+          }
+        </div>
+      </div>
+    }
+    @case ('error') {
+      <div class="battle__panel">
+        <app-state-message kind="error" title="Couldn't load Pokémon" [message]="pool().error ?? ''" (retry)="store.loadNextPage()" />
+      </div>
+    }
+    @case ('empty') {
+      <div class="battle__panel">
+        <app-state-message kind="empty" title="Not enough Pokémon" message="You need at least two Pokémon to battle. Try again later." />
+      </div>
+    }
+    @default {
+      <div class="battle__stats" aria-live="polite">
+        <span>Wins <strong>{{ wins() }}</strong></span>
+        <span>Losses <strong>{{ losses() }}</strong></span>
+        <span>Win streak <strong>{{ streak() }}</strong></span>
+        <span>Best streak <strong>{{ bestStreak() }}</strong></span>
+      </div>
+
+      @if (phase() === 'select') {
+        <div class="battle__panel">
+          <div class="battle__panel-head">
+            <h2>Choose your fighter</h2>
+            <button type="button" class="battle__ghost" (click)="rerollChoices()">Shuffle</button>
+          </div>
+          <div class="battle__choices">
+            @for (p of choices(); track p.id) {
+              <button type="button" class="battle__choice" (click)="startBattle(p)">
+                <img [src]="p.artworkUrl" width="96" height="96" loading="lazy" alt="" aria-hidden="true" />
+                <span class="battle__choice-name">{{ p.name }}</span>
+                <span class="battle__choice-types">
+                  @for (t of p.types; track t) {
+                    <app-type-badge [type]="t" />
+                  }
+                </span>
+                <span class="battle__choice-meta">HP {{ p.stats.hp }} · Spd {{ p.stats.speed }} · Total {{ p.total }}</span>
+              </button>
+            }
+          </div>
+        </div>
+      } @else if (battle(); as b) {
+        <div class="arena" [class.arena--over]="phase() === 'over'">
+          <app-battle-fighter
+            side="opponent"
+            [combatant]="b.opponent"
+            [hp]="opponentHp()"
+            [imageUrl]="artFor('opponent')"
+            [attacking]="attacking() === 'opponent'"
+            [hurt]="hurt() === 'opponent'"
+            [floating]="floating()"
+            (imageError)="onArtError('opponent')"
+          />
+          <app-battle-fighter
+            side="player"
+            [combatant]="b.player"
+            [hp]="playerHp()"
+            [imageUrl]="artFor('player')"
+            [attacking]="attacking() === 'player'"
+            [hurt]="hurt() === 'player'"
+            [floating]="floating()"
+            (imageError)="onArtError('player')"
+          />
+        </div>
+
+        <ul class="log" aria-live="polite" aria-label="Battle log">
+          @for (line of log(); track $index) {
+            <li [class.log__latest]="$last">{{ line }}</li>
+          }
+        </ul>
+
+        @if (phase() === 'over') {
+          <div class="result" [class.result--win]="winner() === 'player'" role="status">
+            <h2>{{ winner() === 'player' ? 'You win! 🎉' : 'You lost…' }}</h2>
+            <div class="result__actions">
+              <button type="button" class="battle__primary" (click)="rematch()">Rematch</button>
+              <button type="button" class="battle__ghost" (click)="chooseAnother()">New fighter</button>
+            </div>
+          </div>
+        } @else {
+          <div class="moves">
+            @for (move of moves; track move.id; let i = $index) {
+              <button type="button" class="move" [class.move--guard]="move.kind === 'status'" [disabled]="busy()" (click)="useMove(move.id)">
+                <span class="move__name"><kbd>{{ i + 1 }}</kbd> {{ move.label }}</span>
+                <span class="move__desc">{{ move.description }}</span>
+              </button>
+            }
+          </div>
+        }
+      }
+    }
+  }
+</section>

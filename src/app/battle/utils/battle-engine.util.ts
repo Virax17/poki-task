@@ -86,7 +86,8 @@ export function chooseOpponentMove(state: BattleState, random: RandomFn = Math.r
   return 'quick';
 }
 
-function capitalise(name: string): string {
+/** Capitalises a Pokémon name for display. */
+export function capitalise(name: string): string {
   return name.charAt(0).toUpperCase() + name.slice(1);
 }
 

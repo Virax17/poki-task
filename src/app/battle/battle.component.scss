@@ -1,0 +1,237 @@
+@use '../common/styles/shared';
+
+.battle {
+  max-width: 760px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+
+  &__title {
+    margin: 0;
+    text-align: center;
+  }
+
+  &__stats {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 8px;
+    color: var(--color-text-muted);
+
+    strong {
+      color: var(--color-text);
+    }
+  }
+
+  &__panel {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 20px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    background: var(--color-surface-2);
+  }
+
+  &__panel-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    h2 {
+      margin: 0;
+      font-size: 18px;
+    }
+  }
+
+  &__choices {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 12px;
+  }
+
+  &__choice {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 12px 8px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    background: var(--color-surface);
+    transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+
+    &:hover {
+      transform: translateY(-3px);
+      border-color: var(--color-primary);
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  &__choice-name {
+    font-weight: 700;
+    text-transform: capitalize;
+  }
+
+  &__choice-types {
+    display: flex;
+    gap: 4px;
+  }
+
+  &__choice-meta {
+    font-size: 11px;
+    color: var(--color-text-muted);
+  }
+
+  &__primary {
+    @include shared.button(var(--color-primary));
+    color: #fff;
+  }
+
+  &__ghost {
+    @include shared.button(var(--color-surface-3));
+  }
+}
+
+// ---- Arena -----------------------------------------------------------------
+
+.arena {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(180deg, #cfe8ff 0%, #e8f6ff 45%, #b8e0a0 45%, #8fcf72 100%);
+  overflow: hidden;
+  transition: filter 0.4s ease;
+
+  &--over {
+    filter: saturate(0.7);
+  }
+}
+
+// ---- Log, moves, result ---------------------------------------------------------
+
+.log {
+  min-height: 140px;
+  margin: 0;
+  padding: 10px 14px;
+  list-style: none;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface-2);
+  color: var(--color-text-muted);
+
+  li {
+    padding: 2px 0;
+    text-transform: none;
+  }
+
+  &__latest {
+    color: var(--color-text);
+    font-weight: 600;
+  }
+}
+
+.moves {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.move {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  padding: 12px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface-2);
+  text-align: left;
+  transition: transform 0.12s ease, border-color 0.12s ease;
+
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    border-color: var(--color-primary);
+  }
+
+  &:disabled {
+    opacity: 0.55;
+    cursor: wait;
+  }
+
+  &--guard:hover:not(:disabled) {
+    border-color: var(--color-success);
+  }
+
+  &__name {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+
+    kbd {
+      display: inline-grid;
+      place-items: center;
+      width: 20px;
+      height: 20px;
+      border-radius: 4px;
+      background: var(--color-surface-3);
+      font-size: 12px;
+    }
+  }
+
+  &__desc {
+    font-size: 12px;
+    color: var(--color-text-muted);
+  }
+}
+
+.result {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 16px;
+  border: 1px solid var(--color-danger);
+  border-radius: var(--radius);
+  background: #fde4e1;
+  animation: pop-in 0.35s ease-out;
+
+  &--win {
+    border-color: var(--color-success);
+    background: #dff5e6;
+  }
+
+  h2 {
+    margin: 0;
+  }
+
+  &__actions {
+    display: flex;
+    gap: 10px;
+  }
+}
+
+// ---- Keyframes ------------------------------------------------------------------
+
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (max-width: 560px) {
+  .moves {
+    grid-template-columns: 1fr;
+  }
+}

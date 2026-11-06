@@ -10,6 +10,6 @@ describe('AppComponent', () => {
     fixture.detectChanges();
 
     const links = fixture.nativeElement.querySelectorAll('.app-header__nav a');
-    expect(links.length).toBe(3);
+    expect(links.length).toBe(4);
   });
 });
