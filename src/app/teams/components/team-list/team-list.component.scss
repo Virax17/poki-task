@@ -1,0 +1,95 @@
+.team-list {
+  &__title {
+    margin: 0 0 12px;
+    font-size: 18px;
+  }
+
+  &__items {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  &__card {
+    position: relative;
+    display: flex;
+    align-items: stretch;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    background: var(--color-surface-2);
+    animation: card-in 0.25s ease-out;
+
+    &--selected {
+      border-color: var(--color-primary);
+    }
+
+    &--pending {
+      opacity: 0.65;
+    }
+
+    &--skeleton {
+      flex-direction: column;
+      gap: 10px;
+      padding: 12px 16px;
+      min-height: 98px;
+    }
+  }
+
+  &__select {
+    flex: 1;
+    display: grid;
+    gap: 2px;
+    padding: 12px 16px;
+    border: 0;
+    background: transparent;
+    text-align: left;
+  }
+
+  &__name {
+    font-weight: 700;
+  }
+
+  &__meta {
+    color: var(--color-text-muted);
+    font-size: 12px;
+  }
+
+  &__sprites {
+    display: flex;
+    flex-wrap: wrap;
+    min-height: 40px;
+    margin-top: 4px;
+  }
+
+  &__delete {
+    align-self: flex-start;
+    margin: 8px;
+    padding: 6px;
+    border: 0;
+    border-radius: 6px;
+    background: transparent;
+
+    &:hover:not(:disabled) {
+      background: rgba(255, 92, 92, 0.2);
+    }
+
+    &:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+  }
+}
+
+@keyframes card-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}

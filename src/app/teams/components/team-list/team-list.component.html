@@ -1,0 +1,62 @@
+<section class="team-list" aria-label="Teams">
+  <h2 class="team-list__title">Your teams</h2>
+
+  @switch (view().status) {
+    @case ('loading') {
+      <ul class="team-list__items" aria-busy="true">
+        @for (n of skeletonCards; track n) {
+          <li class="team-list__card team-list__card--skeleton">
+            <app-skeleton width="140px" height="18px" />
+            <div class="team-list__sprites">
+              @for (s of [1, 2, 3, 4, 5, 6]; track s) {
+                <app-skeleton width="40px" height="40px" [circle]="true" />
+              }
+            </div>
+          </li>
+        }
+      </ul>
+    }
+    @case ('error') {
+      <app-state-message kind="error" title="Couldn't load teams" [message]="view().error ?? ''" (retry)="retry.emit()" />
+    }
+    @case ('empty') {
+      <app-state-message kind="empty" title="No teams yet" message="Create your first team using the form." />
+    }
+    @default {
+      <ul class="team-list__items">
+        @for (team of view().teams; track team.id) {
+          <li
+            class="team-list__card"
+            [class.team-list__card--selected]="team.id === selectedId()"
+            [class.team-list__card--pending]="team.pending"
+          >
+            <button type="button" class="team-list__select" (click)="selected.emit(team)" [attr.aria-pressed]="team.id === selectedId()">
+              <span class="team-list__name">{{ team.name }}</span>
+              <span class="team-list__meta">
+                @if (team.pending) {
+                  Saving…
+                } @else {
+                  {{ team.createdAt | date: 'mediumDate' }}
+                }
+              </span>
+              <span class="team-list__sprites">
+                @for (id of team.pokemonIds; track $index) {
+                  <img [src]="spriteUrl(id)" width="40" height="40" loading="lazy" alt="" aria-hidden="true" />
+                }
+              </span>
+            </button>
+            <button
+              type="button"
+              class="team-list__delete"
+              [disabled]="team.pending"
+              [attr.aria-label]="'Delete team ' + team.name"
+              (click)="deleted.emit(team)"
+            >
+              <img src="assets/icons/ic_delete.svg" width="16" height="16" alt="" aria-hidden="true" />
+            </button>
+          </li>
+        }
+      </ul>
+    }
+  }
+</section>

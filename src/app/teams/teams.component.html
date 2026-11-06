@@ -1,0 +1,22 @@
+<section class="teams">
+  <h1 class="teams__title">Teams</h1>
+
+  <div class="teams__grid">
+    <div class="teams__col">
+      @if (view(); as v) {
+        <app-team-list
+          [view]="v"
+          [selectedId]="selectedTeamId()"
+          (selected)="onSelect($event)"
+          (deleted)="onDelete($event)"
+          (retry)="store.load()"
+        />
+      }
+    </div>
+
+    <div class="teams__col">
+      <app-team-form />
+      <app-team-summary [team]="selectedTeam()" />
+    </div>
+  </div>
+</section>

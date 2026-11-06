@@ -1,0 +1,59 @@
+<form class="team-form" [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+  <h2 class="team-form__title">Create a team</h2>
+
+  <div class="team-form__group">
+    <label for="team-name">Team name</label>
+    <input
+      id="team-name"
+      type="text"
+      formControlName="name"
+      autocomplete="off"
+      placeholder="e.g. Kanto Starters"
+      [class.invalid]="showError(name)"
+      [attr.aria-invalid]="showError(name)"
+      aria-describedby="team-name-msg"
+    />
+    <div id="team-name-msg" class="team-form__msg" aria-live="polite">
+      @if (name.pending) {
+        <span class="team-form__hint">Checking name…</span>
+      } @else if (showError(name)) {
+        @if (name.errors?.['required']) {
+          <span class="team-form__error">Team name is required.</span>
+        } @else if (name.errors?.['minlength']) {
+          <span class="team-form__error">Use at least {{ minNameLength }} characters.</span>
+        } @else if (name.errors?.['maxlength']) {
+          <span class="team-form__error">Use at most {{ maxNameLength }} characters.</span>
+        } @else if (name.errors?.['nameTaken']) {
+          <span class="team-form__error">A team with this name already exists.</span>
+        }
+      }
+    </div>
+  </div>
+
+  <div class="team-form__group">
+    <label for="pokemon-picker">Pokémon ({{ pokemon.value.length }}/{{ maxTeamSize }})</label>
+    <app-pokemon-picker
+      inputId="pokemon-picker"
+      [selected]="pokemon.value"
+      [max]="maxTeamSize"
+      [invalid]="showError(pokemon)"
+      (picked)="onPicked($event)"
+      (removed)="onRemoved($event)"
+      (blurred)="pokemon.markAsTouched()"
+    />
+    <div class="team-form__msg" aria-live="polite">
+      @if (showError(pokemon)) {
+        @if (pokemon.errors?.['minItems']) {
+          <span class="team-form__error">Add at least one Pokémon.</span>
+        } @else if (pokemon.errors?.['maxItems']) {
+          <span class="team-form__error">A team can have at most {{ maxTeamSize }} Pokémon.</span>
+        }
+      }
+    </div>
+  </div>
+
+  <button type="submit" class="team-form__submit" [disabled]="isSubmitting() || status() === 'PENDING'">
+    <img src="assets/icons/ic_add.svg" width="16" height="16" alt="" aria-hidden="true" />
+    Create team
+  </button>
+</form>

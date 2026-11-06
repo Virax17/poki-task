@@ -1,0 +1,45 @@
+<section class="summary" aria-label="Selected team">
+  @if (team(); as t) {
+    <h2 class="summary__title">{{ t.name }}</h2>
+
+    @switch (membersState().status) {
+      @case ('error') {
+        <app-state-message kind="error" title="Couldn't load team members" [message]="membersState().error ?? ''" (retry)="onRetry()" />
+      }
+      @case ('success') {
+        @if (membersState().members.length === 0) {
+          <app-state-message kind="empty" message="No Pokémon data available for this team." />
+        } @else {
+          <p class="summary__total">Total base stats: <strong>{{ total() }}</strong></p>
+
+          <h3 class="summary__heading">Type distribution</h3>
+          <ul class="summary__types">
+            @for (entry of distribution(); track entry.type) {
+              <li><app-type-badge [type]="entry.type" /> × {{ entry.count }}</li>
+            }
+          </ul>
+
+          <ul class="summary__members">
+            @for (m of membersState().members; track m.id) {
+              <li>
+                <img [src]="m.spriteUrl" width="40" height="40" alt="" aria-hidden="true" />
+                <span class="summary__member-name">{{ m.name }}</span>
+                <span class="summary__member-total">{{ m.total }}</span>
+              </li>
+            }
+          </ul>
+        }
+      }
+      @default {
+        <div aria-busy="true" class="summary__skeleton">
+          <app-skeleton width="160px" />
+          <app-skeleton width="100%" height="40px" />
+          <app-skeleton width="100%" height="40px" />
+          <app-skeleton width="100%" height="40px" />
+        </div>
+      }
+    }
+  } @else {
+    <app-state-message kind="empty" title="No team selected" message="Select a team to see its type distribution and total base stats." />
+  }
+</section>

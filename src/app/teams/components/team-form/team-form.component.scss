@@ -1,0 +1,61 @@
+@use '../../../common/styles/shared';
+
+.team-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface-2);
+
+  &__title {
+    margin: 0;
+    font-size: 18px;
+  }
+
+  &__group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+
+    label {
+      font-weight: 600;
+    }
+
+    input[type='text'] {
+      padding: 10px 12px;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius);
+      background: var(--color-surface);
+
+      &:focus {
+        border-color: var(--color-accent);
+        outline: 0;
+      }
+
+      &.invalid {
+        border-color: var(--color-danger);
+      }
+    }
+  }
+
+  &__msg {
+    min-height: 18px;
+    font-size: 13px;
+  }
+
+  &__error {
+    color: #ff8f8f;
+  }
+
+  &__hint {
+    color: var(--color-text-muted);
+  }
+
+  &__submit {
+    @include shared.button(var(--color-primary));
+    align-self: flex-start;
+    color: #fff;
+  }
+}

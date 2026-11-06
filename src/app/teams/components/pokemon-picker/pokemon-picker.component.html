@@ -1,0 +1,74 @@
+<div class="picker">
+  @if (selected().length) {
+    <ul class="picker__chips" aria-label="Selected Pokémon">
+      @for (pokemon of selected(); track pokemon.id) {
+        <li class="picker__chip">
+          <img [src]="pokemon.spriteUrl" width="28" height="28" alt="" aria-hidden="true" />
+          <span>{{ pokemon.name }}</span>
+          <button type="button" [attr.aria-label]="'Remove ' + pokemon.name" (click)="removed.emit(pokemon.id)">
+            <img src="assets/icons/ic_close.svg" width="12" height="12" alt="" aria-hidden="true" />
+          </button>
+        </li>
+      }
+    </ul>
+  }
+
+  <div class="picker__field" [class.picker__field--invalid]="invalid()">
+    <img src="assets/icons/ic_search.svg" width="16" height="16" alt="" aria-hidden="true" />
+    <input
+      type="text"
+      autocomplete="off"
+      role="combobox"
+      aria-autocomplete="list"
+      [id]="inputId()"
+      [attr.aria-expanded]="showDropdown()"
+      [disabled]="isFull()"
+      [placeholder]="isFull() ? 'Team is full (' + max() + '/' + max() + ')' : 'Search Pokémon to add…'"
+      [value]="query()"
+      (input)="onInput($event)"
+      (focus)="isOpen.set(true)"
+      (blur)="onBlur()"
+    />
+  </div>
+
+  @if (showDropdown()) {
+    <div class="picker__dropdown" role="listbox">
+      @switch (results().status) {
+        @case ('error') {
+          <app-state-message kind="error" [message]="results().error ?? ''" (retry)="onRetry()" />
+        }
+        @case ('success') {
+          @if (results().items.length === 0) {
+            <app-state-message kind="empty" message="No Pokémon match your search." />
+          } @else {
+            @for (pokemon of results().items; track pokemon.id) {
+              <button
+                type="button"
+                role="option"
+                class="picker__option"
+                [disabled]="selectedIds().has(pokemon.id)"
+                [attr.aria-selected]="selectedIds().has(pokemon.id)"
+                (mousedown)="$event.preventDefault()"
+                (click)="choose(pokemon)"
+              >
+                <img [src]="pokemon.spriteUrl" width="32" height="32" alt="" aria-hidden="true" />
+                <span class="picker__option-name">#{{ pokemon.id }} {{ pokemon.name }}</span>
+                @if (selectedIds().has(pokemon.id)) {
+                  <span class="picker__added">added</span>
+                }
+              </button>
+            }
+          }
+        }
+        @default {
+          @for (n of [1, 2, 3]; track n) {
+            <div class="picker__option picker__option--skeleton" aria-busy="true">
+              <app-skeleton width="32px" height="32px" [circle]="true" />
+              <app-skeleton width="120px" />
+            </div>
+          }
+        }
+      }
+    </div>
+  }
+</div>
