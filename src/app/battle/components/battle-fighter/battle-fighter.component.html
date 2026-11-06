@@ -1,0 +1,54 @@
+<div
+  class="fighter"
+  [class.fighter--player]="side() === 'player'"
+  [class.fighter--attack]="attacking()"
+  [class.fighter--hurt]="hurt()"
+  [class.fighter--ko]="isKnockedOut()"
+>
+  @if (side() === 'player') {
+    <ng-container [ngTemplateOutlet]="stage" />
+    <ng-container [ngTemplateOutlet]="info" />
+  } @else {
+    <ng-container [ngTemplateOutlet]="info" />
+    <ng-container [ngTemplateOutlet]="stage" />
+  }
+</div>
+
+<ng-template #info>
+  <div class="fighter__info">
+    <span class="fighter__name">{{ combatant().pokemon.name }}</span>
+    <span class="fighter__types">
+      @for (t of combatant().pokemon.types; track t) {
+        <app-type-badge [type]="t" />
+      }
+    </span>
+    <div
+      class="hp"
+      role="progressbar"
+      [attr.aria-label]="(side() === 'player' ? 'Your' : 'Opponent') + ' HP'"
+      [attr.aria-valuenow]="percent()"
+      aria-valuemin="0"
+      aria-valuemax="100"
+    >
+      <span class="hp__fill" [class]="'hp__fill hp__fill--' + hpLevel()" [style.width.%]="percent()"></span>
+    </div>
+    <span class="hp__text">{{ hp() }} / {{ combatant().maxHp }}</span>
+  </div>
+</ng-template>
+
+<ng-template #stage>
+  <div class="fighter__stage">
+    <img
+      class="fighter__art"
+      [class.fighter__art--flip]="side() === 'player'"
+      [src]="imageUrl()"
+      width="190"
+      height="190"
+      [alt]="combatant().pokemon.name"
+      (error)="imageError.emit()"
+    />
+    @if (floatingHere(); as f) {
+      <span [class]="'float float--' + f.kind">{{ f.text }}</span>
+    }
+  </div>
+</ng-template>

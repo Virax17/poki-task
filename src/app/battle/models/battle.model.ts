@@ -43,6 +43,13 @@ export interface TurnEvent {
   opponentHp: number;
 }
 
+/** Short-lived number / label that floats up over a fighter (damage, heal, miss). */
+export interface FloatingText {
+  side: Side;
+  text: string;
+  kind: 'damage' | 'heal' | 'miss' | 'crit';
+}
+
 export interface TurnResult {
   events: TurnEvent[];
   state: BattleState;

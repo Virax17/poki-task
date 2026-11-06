@@ -1,0 +1,214 @@
+.fighter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  transition: opacity 0.6s ease, transform 0.6s ease;
+
+  &__info {
+    min-width: 200px;
+    max-width: 260px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 10px 12px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    background: rgba(255, 255, 255, 0.92);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  }
+
+  &__name {
+    font-weight: 700;
+    text-transform: capitalize;
+  }
+
+  &__types {
+    display: flex;
+    gap: 4px;
+  }
+
+  &__stage {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 210px;
+    height: 190px;
+  }
+
+  &__art {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 8px 6px rgba(0, 0, 0, 0.25));
+    animation: idle 2.4s ease-in-out infinite;
+
+    &--flip {
+      transform: scaleX(-1);
+      animation-name: idle-flip;
+    }
+  }
+
+  // Lunge toward the other side while attacking
+  &--attack .fighter__stage {
+    animation: lunge-down 0.45s ease-in-out;
+  }
+
+  &--player.fighter--attack .fighter__stage {
+    animation-name: lunge-up;
+  }
+
+  &--hurt .fighter__art {
+    animation: hurt 0.5s linear;
+  }
+
+  &--ko {
+    opacity: 0.35;
+    transform: translateY(24px) rotate(-6deg);
+  }
+}
+
+.hp {
+  height: 10px;
+  border-radius: 5px;
+  background: rgba(0, 0, 0, 0.14);
+  overflow: hidden;
+
+  &__fill {
+    display: block;
+    height: 100%;
+    border-radius: 5px;
+    transition: width 0.7s ease, background-color 0.4s ease;
+
+    &--high {
+      background: #2e9e5b;
+    }
+
+    &--mid {
+      background: #e0a100;
+    }
+
+    &--low {
+      background: #d32f2f;
+    }
+  }
+
+  &__text {
+    font-size: 12px;
+    color: var(--color-text-muted);
+  }
+}
+
+.float {
+  position: absolute;
+  top: 10%;
+  left: 50%;
+  font-size: 28px;
+  font-weight: 800;
+  pointer-events: none;
+  text-shadow: 0 2px 0 #fff, 0 0 8px #fff;
+  animation: float-up 0.8s ease-out forwards;
+
+  &--damage {
+    color: #d32f2f;
+  }
+
+  &--crit {
+    color: #b71c1c;
+    font-size: 36px;
+  }
+
+  &--heal {
+    color: #2e9e5b;
+  }
+
+  &--miss {
+    color: #5a6270;
+    font-size: 22px;
+  }
+}
+
+@keyframes idle {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes idle-flip {
+  0%,
+  100% {
+    transform: scaleX(-1) translateY(0);
+  }
+  50% {
+    transform: scaleX(-1) translateY(-6px);
+  }
+}
+
+@keyframes lunge-down {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(-40px, 40px);
+  }
+}
+
+@keyframes lunge-up {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(40px, -40px);
+  }
+}
+
+@keyframes hurt {
+  0%,
+  100% {
+    opacity: 1;
+    translate: 0 0;
+  }
+  15%,
+  45%,
+  75% {
+    opacity: 0.25;
+    translate: -8px 0;
+  }
+  30%,
+  60%,
+  90% {
+    opacity: 1;
+    translate: 8px 0;
+  }
+}
+
+@keyframes float-up {
+  from {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(0.8);
+  }
+  30% {
+    transform: translate(-50%, -14px) scale(1.15);
+  }
+  to {
+    opacity: 0;
+    transform: translate(-50%, -50px) scale(1);
+  }
+}
+
+@media (max-width: 560px) {
+  .fighter__info {
+    min-width: 150px;
+  }
+
+  .fighter__stage {
+    width: 150px;
+    height: 150px;
+  }
+}
