@@ -1,0 +1,80 @@
+<aside
+  class="panel"
+  [class.panel--open]="open()"
+  role="dialog"
+  aria-label="Pokémon details"
+  [attr.aria-hidden]="!open()"
+>
+  <div class="panel__close-row">
+    <button type="button" class="panel__close-btn" aria-label="Close details" (click)="closed.emit()">
+      <img src="assets/icons/ic_arrow_left.svg" width="24" height="24" alt="" aria-hidden="true" />
+    </button>
+  </div>
+
+  @if (pokemon(); as p) {
+    <div class="panel__content">
+      <img class="panel__art" [src]="p.artworkUrl" width="160" height="160" [alt]="p.name" />
+      <h2 class="panel__title">
+        <span class="panel__id">#{{ p.id }}</span> {{ p.name }}
+      </h2>
+      <div class="panel__types">
+        @for (type of p.types; track type) {
+          <app-type-badge [type]="type" />
+        }
+      </div>
+
+      <dl class="panel__facts">
+        <div><dt>Height</dt><dd>{{ p.height / 10 }} m</dd></div>
+        <div><dt>Weight</dt><dd>{{ p.weight / 10 }} kg</dd></div>
+        <div><dt>Total</dt><dd>{{ p.total }}</dd></div>
+      </dl>
+
+      <h3 class="panel__heading">Base stats</h3>
+      <app-stat-radar-chart [stats]="p.stats" [label]="p.name" [color]="accent()" />
+
+      <ul class="panel__stats">
+        @for (row of statRows(); track row.label) {
+          <li>
+            <span>{{ row.label }}</span>
+            <span class="panel__bar"><span [style.width.%]="row.percent" [style.background]="accent()"></span></span>
+            <span class="panel__stat-value">{{ row.value }}</span>
+          </li>
+        }
+      </ul>
+
+      <h3 class="panel__heading">Abilities</h3>
+      @switch (abilities().status) {
+        @case ('error') {
+          <app-state-message kind="error" [message]="abilities().error ?? ''" (retry)="onRetryAbilities()" />
+        }
+        @case ('success') {
+          @if (abilities().data.length === 0) {
+            <app-state-message kind="empty" message="No abilities recorded for this Pokémon." />
+          } @else {
+            <ul class="panel__abilities">
+              @for (ability of abilities().data; track ability.name) {
+                <li>
+                  <strong>{{ ability.name }}</strong>
+                  @if (ability.isHidden) {
+                    <span class="panel__hidden">hidden</span>
+                  }
+                  <p>{{ ability.shortEffect ?? 'No description available.' }}</p>
+                </li>
+              }
+            </ul>
+          }
+        }
+        @default {
+          <ul class="panel__abilities" aria-busy="true">
+            @for (n of [1, 2]; track n) {
+              <li>
+                <app-skeleton width="110px" />
+                <app-skeleton width="100%" height="12px" />
+              </li>
+            }
+          </ul>
+        }
+      }
+    </div>
+  }
+</aside>

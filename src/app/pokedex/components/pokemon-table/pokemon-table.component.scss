@@ -1,0 +1,83 @@
+@use '../../../common/styles/shared';
+
+.table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface-2);
+  @include shared.custom-scrollbar;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+
+  th,
+  td {
+    padding: 8px 12px;
+    text-align: left;
+    white-space: nowrap;
+  }
+
+  thead th {
+    background: var(--color-surface-3);
+    color: var(--color-text-muted);
+    font-weight: 600;
+  }
+
+  &__num {
+    text-align: right !important;
+  }
+
+  &__sprite {
+    width: 72px;
+  }
+
+  &__sort {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font-weight: inherit;
+  }
+
+  &__row {
+    height: 64px;
+    border-top: 1px solid var(--color-border);
+
+    &--clickable {
+      cursor: pointer;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.05);
+      }
+    }
+
+    &--selected {
+      background: rgba(239, 83, 80, 0.14);
+    }
+  }
+
+  &__name {
+    text-transform: capitalize;
+    font-weight: 600;
+  }
+
+  &__id {
+    color: var(--color-text-muted);
+    font-weight: 400;
+    margin-right: 4px;
+  }
+
+  &__types {
+    display: inline-flex;
+    gap: 4px;
+  }
+
+  &__total {
+    font-weight: 700;
+  }
+}

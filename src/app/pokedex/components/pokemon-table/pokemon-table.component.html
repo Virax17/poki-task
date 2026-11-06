@@ -1,0 +1,102 @@
+<div class="table-wrap">
+  <table class="table">
+    <thead>
+      <tr>
+        <th class="table__sprite" scope="col">Sprite</th>
+        <th scope="col" [attr.aria-sort]="ariaSort('name')">
+          <button type="button" class="table__sort" (click)="sortChange.emit('name')">
+            Name
+            @if (view().sortKey === 'name') {
+              <img [src]="view().sortDirection === 'asc' ? 'assets/icons/ic_sort_asc.svg' : 'assets/icons/ic_sort_desc.svg'" width="12" height="12" alt="" aria-hidden="true" />
+            }
+          </button>
+        </th>
+        <th scope="col">Types</th>
+        @for (col of statColumns; track col.key) {
+          <th scope="col" class="table__num" [attr.aria-sort]="ariaSort(col.key)">
+            <button type="button" class="table__sort" (click)="sortChange.emit(col.key)">
+              {{ col.label }}
+              @if (view().sortKey === col.key) {
+                <img [src]="view().sortDirection === 'asc' ? 'assets/icons/ic_sort_asc.svg' : 'assets/icons/ic_sort_desc.svg'" width="12" height="12" alt="" aria-hidden="true" />
+              }
+            </button>
+          </th>
+        }
+        <th scope="col" class="table__num" [attr.aria-sort]="ariaSort('total')">
+          <button type="button" class="table__sort" (click)="sortChange.emit('total')">
+            Total
+            @if (view().sortKey === 'total') {
+              <img [src]="view().sortDirection === 'asc' ? 'assets/icons/ic_sort_asc.svg' : 'assets/icons/ic_sort_desc.svg'" width="12" height="12" alt="" aria-hidden="true" />
+            }
+          </button>
+        </th>
+      </tr>
+    </thead>
+
+    <tbody>
+      @switch (view().status) {
+        @case ('loading') {
+          @for (row of skeletonRows(); track row) {
+            <tr class="table__row" aria-hidden="true">
+              <td class="table__sprite"><app-skeleton width="48px" height="48px" [circle]="true" /></td>
+              <td><app-skeleton width="90px" /></td>
+              <td><app-skeleton width="70px" height="20px" /></td>
+              @for (col of statColumns; track col.key) {
+                <td class="table__num"><app-skeleton width="28px" /></td>
+              }
+              <td class="table__num"><app-skeleton width="36px" /></td>
+            </tr>
+          }
+        }
+        @case ('error') {
+          <tr>
+            <td [attr.colspan]="statColumns.length + 4">
+              <app-state-message
+                kind="error"
+                title="Couldn't load Pokémon"
+                [message]="view().error ?? ''"
+                (retry)="retry.emit()"
+              />
+            </td>
+          </tr>
+        }
+        @case ('empty') {
+          <tr>
+            <td [attr.colspan]="statColumns.length + 4">
+              <app-state-message kind="empty" title="Nothing found" [message]="emptyMessage()" />
+            </td>
+          </tr>
+        }
+        @default {
+          @for (pokemon of view().rows; track pokemon.id) {
+            <tr
+              class="table__row table__row--clickable"
+              [class.table__row--selected]="pokemon.id === selectedId()"
+              tabindex="0"
+              (click)="rowSelected.emit(pokemon)"
+              (keydown.enter)="rowSelected.emit(pokemon)"
+            >
+              <td class="table__sprite">
+                <img [src]="pokemon.spriteUrl" width="48" height="48" loading="lazy" [alt]="pokemon.name" />
+              </td>
+              <td class="table__name">
+                <span class="table__id">#{{ pokemon.id }}</span> {{ pokemon.name }}
+              </td>
+              <td>
+                <span class="table__types">
+                  @for (type of pokemon.types; track type) {
+                    <app-type-badge [type]="type" />
+                  }
+                </span>
+              </td>
+              @for (col of statColumns; track col.key) {
+                <td class="table__num">{{ pokemon.stats[col.key] }}</td>
+              }
+              <td class="table__num table__total">{{ pokemon.total }}</td>
+            </tr>
+          }
+        }
+      }
+    </tbody>
+  </table>
+</div>

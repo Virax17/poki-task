@@ -1,0 +1,55 @@
+<section class="pokedex" [class.pokedex--panel-open]="isPanelOpen()">
+  <h1 class="pokedex__title">Pokédex</h1>
+
+  @if (view(); as v) {
+    <app-pokemon-filters
+      [typeFilter]="v.typeFilter"
+      (searchChange)="store.setSearchTerm($event)"
+      (typeChange)="store.setTypeFilter($event)"
+    />
+
+    <app-pokemon-table
+      [view]="v"
+      [selectedId]="isPanelOpen() ? selectedPokemon()?.id ?? null : null"
+      (sortChange)="store.setSort($event)"
+      (rowSelected)="onRowSelected($event)"
+      (retry)="onRetry()"
+    />
+
+    @if (v.status === 'success' || v.status === 'empty') {
+      <app-pagination
+        [page]="v.page"
+        [pageSize]="v.pageSize"
+        [totalItems]="v.totalFiltered"
+        (pageChange)="store.setPage($event)"
+        (pageSizeChange)="store.setPageSize($event)"
+      />
+    }
+
+    @if (!v.isSearching && v.status !== 'loading' && v.status !== 'error') {
+      <div class="pokedex__more">
+        @if (v.loadMoreError) {
+          <p class="pokedex__more-error" role="alert">{{ v.loadMoreError }}</p>
+        }
+        @if (v.hasMore) {
+          <button
+            type="button"
+            class="pokedex__more-btn"
+            [disabled]="v.loadingMore"
+            (click)="store.loadNextPage()"
+          >
+            {{ v.loadingMore ? 'Loading more…' : v.loadMoreError ? 'Retry loading more' : 'Load more Pokémon' }}
+          </button>
+        } @else {
+          <p class="pokedex__more-end">You have reached the end of the Pokédex.</p>
+        }
+      </div>
+    }
+  }
+
+  <app-pokemon-detail-panel
+    [pokemon]="selectedPokemon()"
+    [open]="isPanelOpen()"
+    (closed)="closePanel()"
+  />
+</section>

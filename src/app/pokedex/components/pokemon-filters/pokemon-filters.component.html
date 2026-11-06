@@ -1,0 +1,28 @@
+<div class="filters">
+  <div class="filters__search">
+    <img src="assets/icons/ic_search.svg" width="16" height="16" alt="" aria-hidden="true" />
+    <input
+      type="search"
+      class="filters__input"
+      placeholder="Search by name…"
+      aria-label="Search Pokémon by name"
+      [value]="text()"
+      (input)="onSearchInput($event)"
+    />
+    @if (text()) {
+      <button type="button" class="filters__clear" aria-label="Clear search" (click)="clearSearch()">
+        <img src="assets/icons/ic_close.svg" width="14" height="14" alt="" aria-hidden="true" />
+      </button>
+    }
+  </div>
+
+  <label class="filters__type">
+    <span class="filters__label">Type</span>
+    <select aria-label="Filter by type" (change)="onTypeChange($event)">
+      <option value="" [selected]="!typeFilter()">All types</option>
+      @for (type of types; track type) {
+        <option [value]="type" [selected]="type === typeFilter()">{{ type }}</option>
+      }
+    </select>
+  </label>
+</div>
