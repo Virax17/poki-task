@@ -1,0 +1,220 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 16px;
+}
+
+.card {
+  --c1: #8a8a59;
+  --c2: #8a8a59;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 0 14px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  background: var(--color-surface-2);
+  overflow: hidden;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.25s ease;
+  animation: card-in 0.55s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  animation-delay: calc(var(--i, 0) * 45ms);
+
+  // Type-coloured header that the artwork floats over
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 138px;
+    background: linear-gradient(135deg, var(--c1), var(--c2));
+    opacity: 0.9;
+    clip-path: ellipse(120% 100% at 50% 0%);
+  }
+
+  &:hover:not(.card--skeleton),
+  &:focus-visible {
+    transform: translateY(-6px) rotate(-0.6deg);
+    box-shadow: 0 16px 28px rgba(0, 0, 0, 0.16);
+  }
+
+  &:hover .card__art {
+    transform: scale(1.12) rotate(4deg);
+  }
+
+  &--selected {
+    outline: 3px solid var(--c1);
+    outline-offset: 2px;
+  }
+
+  &--skeleton {
+    height: 330px;
+    padding-top: 16px;
+    justify-content: flex-start;
+    cursor: default;
+  }
+
+  &__number {
+    position: absolute;
+    top: 6px;
+    left: 12px;
+    font-size: 34px;
+    font-weight: 900;
+    letter-spacing: -1px;
+    color: rgba(255, 255, 255, 0.4);
+  }
+
+  &__art-wrap {
+    position: relative;
+    z-index: 1;
+    margin-top: 14px;
+    animation: float 3.2s ease-in-out infinite;
+    animation-delay: calc(var(--i, 0) * -0.4s);
+  }
+
+  &__art {
+    display: block;
+    object-fit: contain;
+    filter: drop-shadow(0 8px 6px rgba(0, 0, 0, 0.3));
+    transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  &__ring {
+    position: absolute;
+    z-index: 2;
+    top: 8px;
+    right: 8px;
+    display: grid;
+    place-items: center;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.92);
+
+    svg {
+      position: absolute;
+      transform: rotate(-90deg);
+    }
+  }
+
+  &__ring-track {
+    fill: none;
+    stroke: rgba(0, 0, 0, 0.1);
+    stroke-width: 6;
+  }
+
+  &__ring-value {
+    fill: none;
+    stroke: var(--c1);
+    stroke-width: 6;
+    stroke-linecap: round;
+    stroke-dashoffset: var(--offset);
+    animation: ring-fill 1.1s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+    animation-delay: calc(var(--i, 0) * 45ms + 250ms);
+  }
+
+  &__ring-text {
+    position: relative;
+    font-size: 12px;
+    font-weight: 800;
+  }
+
+  &__name {
+    z-index: 1;
+    font-size: 17px;
+    font-weight: 800;
+    text-transform: capitalize;
+  }
+
+  &__types {
+    z-index: 1;
+    display: flex;
+    gap: 4px;
+  }
+
+  &__bars {
+    z-index: 1;
+    display: grid;
+    gap: 4px;
+    width: 100%;
+    margin-top: 6px;
+  }
+}
+
+.bar {
+  display: grid;
+  grid-template-columns: 28px 1fr 26px;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+
+  &__label {
+    text-align: left;
+    color: var(--color-text-muted);
+    font-weight: 700;
+  }
+
+  &__track {
+    height: 6px;
+    border-radius: 3px;
+    background: rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+  }
+
+  &__fill {
+    display: block;
+    height: 100%;
+    width: var(--w);
+    border-radius: 3px;
+    background: linear-gradient(90deg, var(--c1), var(--c2));
+    transform-origin: left;
+    animation: bar-fill 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+    animation-delay: calc(var(--i, 0) * 45ms + var(--b, 0) * 70ms + 200ms);
+  }
+
+  &__value {
+    text-align: right;
+    font-weight: 700;
+  }
+}
+
+@keyframes card-in {
+  from {
+    opacity: 0;
+    transform: translateY(28px) scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes bar-fill {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes ring-fill {
+  from {
+    stroke-dashoffset: var(--full);
+  }
+  to {
+    stroke-dashoffset: var(--offset);
+  }
+}

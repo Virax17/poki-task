@@ -144,6 +144,7 @@ export function selectPokedexView$(
         hasMore: state.hasMore,
         loadingMore: state.loadingMore,
         loadMoreError: state.loadMoreError,
+        loadedCount: state.listIds.length,
       };
     }),
     shareReplay({ bufferSize: 1, refCount: true }),

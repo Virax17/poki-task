@@ -4,17 +4,36 @@
   @if (view(); as v) {
     <app-pokemon-filters
       [typeFilter]="v.typeFilter"
+      [viewMode]="viewMode()"
+      [sortKey]="v.sortKey"
+      [sortDirection]="v.sortDirection"
+      (viewModeChange)="viewMode.set($event)"
+      (sortChange)="store.setSort($event)"
       (searchChange)="store.setSearchTerm($event)"
       (typeChange)="store.setTypeFilter($event)"
     />
 
-    <app-pokemon-table
-      [view]="v"
-      [selectedId]="isPanelOpen() ? selectedPokemon()?.id ?? null : null"
-      (sortChange)="store.setSort($event)"
-      (rowSelected)="onRowSelected($event)"
-      (retry)="onRetry()"
-    />
+    <div class="pokedex__progress" role="progressbar" aria-label="Pokémon discovered" [attr.aria-valuenow]="v.loadedCount" aria-valuemin="0" [attr.aria-valuemax]="totalSpecies">
+      <span class="pokedex__progress-label">Discovered <strong>{{ v.loadedCount }}</strong> / {{ totalSpecies }}</span>
+      <span class="pokedex__progress-track"><span [style.width.%]="(v.loadedCount / totalSpecies) * 100"></span></span>
+    </div>
+
+    @if (viewMode() === 'cards') {
+      <app-pokemon-card-grid
+        [view]="v"
+        [selectedId]="isPanelOpen() ? selectedPokemon()?.id ?? null : null"
+        (rowSelected)="onRowSelected($event)"
+        (retry)="onRetry()"
+      />
+    } @else {
+      <app-pokemon-table
+        [view]="v"
+        [selectedId]="isPanelOpen() ? selectedPokemon()?.id ?? null : null"
+        (sortChange)="store.setSort($event)"
+        (rowSelected)="onRowSelected($event)"
+        (retry)="onRetry()"
+      />
+    }
 
     @if (v.status === 'success' || v.status === 'empty') {
       <app-pagination

@@ -41,3 +41,23 @@ export const STAT_LABELS: Readonly<Record<StatKey, string>> = {
   'special-defense': 'Sp.Def',
   speed: 'Speed',
 };
+
+/** Approximate number of Pokémon species, used for the "discovered" progress bar. */
+export const TOTAL_SPECIES = 1025;
+
+/** Highest stat total used to scale the circular progress ring on cards. */
+export const MAX_STAT_TOTAL = 720;
+
+/** Highest single stat used to scale the stat bars on cards. */
+export const MAX_SINGLE_STAT = 160;
+
+export const VIEW_MODE_STORAGE_KEY = 'miniPokedex.viewMode';
+
+export const STAT_SHORT_LABELS: Readonly<Record<StatKey, string>> = {
+  hp: 'HP',
+  attack: 'ATK',
+  defense: 'DEF',
+  'special-attack': 'SpA',
+  'special-defense': 'SpD',
+  speed: 'SPD',
+};

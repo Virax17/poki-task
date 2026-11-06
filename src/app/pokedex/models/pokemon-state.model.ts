@@ -43,4 +43,6 @@ export interface PokedexView {
   hasMore: boolean;
   loadingMore: boolean;
   loadMoreError: string | null;
+  /** How many Pokémon have been fetched so far (browse list). */
+  loadedCount: number;
 }

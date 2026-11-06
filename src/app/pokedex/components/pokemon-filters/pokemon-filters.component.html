@@ -25,4 +25,30 @@
       }
     </select>
   </label>
+
+  @if (viewMode() === 'cards') {
+    <div class="filters__sort">
+      <label class="filters__type">
+        <span class="filters__label">Sort</span>
+        <select aria-label="Sort Pokémon by" (change)="onSortSelect($event)">
+          @for (option of sortOptions; track option.key) {
+            <option [value]="option.key" [selected]="option.key === sortKey()">{{ option.label }}</option>
+          }
+        </select>
+      </label>
+      <button
+        type="button"
+        class="filters__dir"
+        [attr.aria-label]="sortDirection() === 'asc' ? 'Sorted ascending, switch to descending' : 'Sorted descending, switch to ascending'"
+        (click)="sortChange.emit(sortKey())"
+      >
+        <img [src]="sortDirection() === 'asc' ? 'assets/icons/ic_sort_asc.svg' : 'assets/icons/ic_sort_desc.svg'" width="16" height="16" alt="" aria-hidden="true" />
+      </button>
+    </div>
+  }
+
+  <div class="filters__toggle" role="group" aria-label="View mode">
+    <button type="button" [class.active]="viewMode() === 'cards'" [attr.aria-pressed]="viewMode() === 'cards'" (click)="viewModeChange.emit('cards')">Cards</button>
+    <button type="button" [class.active]="viewMode() === 'table'" [attr.aria-pressed]="viewMode() === 'table'" (click)="viewModeChange.emit('table')">Table</button>
+  </div>
 </div>

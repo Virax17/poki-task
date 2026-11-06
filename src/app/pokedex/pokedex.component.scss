@@ -10,6 +10,30 @@
     margin: 0;
   }
 
+  &__progress {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--color-text-muted);
+  }
+
+  &__progress-track {
+    flex: 1;
+    height: 8px;
+    border-radius: 4px;
+    background: rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+
+    span {
+      display: block;
+      height: 100%;
+      min-width: 4px;
+      border-radius: 4px;
+      background: linear-gradient(90deg, var(--color-primary), #ff8a50);
+      transition: width 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+  }
+
   &__more {
     display: flex;
     flex-direction: column;

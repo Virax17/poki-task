@@ -1,0 +1,83 @@
+@switch (view().status) {
+  @case ('loading') {
+    <div class="grid" aria-busy="true">
+      @for (n of skeletons(); track n) {
+        <div class="card card--skeleton" [style.--i]="delayIndex(n)">
+          <app-skeleton width="120px" height="120px" [circle]="true" />
+          <app-skeleton width="110px" height="18px" />
+          <app-skeleton width="80px" height="20px" />
+          <app-skeleton width="100%" height="64px" />
+        </div>
+      }
+    </div>
+  }
+  @case ('error') {
+    <app-state-message kind="error" title="Couldn't load Pokémon" [message]="view().error ?? ''" (retry)="retry.emit()" />
+  }
+  @case ('empty') {
+    <app-state-message kind="empty" title="Nothing found" [message]="emptyMessage()" />
+  }
+  @default {
+    <div class="grid">
+      @for (card of cards(); track card.pokemon.id; let i = $index) {
+        <button
+          type="button"
+          class="card"
+          [class.card--selected]="card.pokemon.id === selectedId()"
+          [style.--c1]="card.primary"
+          [style.--c2]="card.secondary"
+          [style.--i]="delayIndex(i)"
+          [attr.aria-label]="'Open details for ' + card.pokemon.name"
+          (click)="rowSelected.emit(card.pokemon)"
+        >
+          <span class="card__number" aria-hidden="true">{{ padId(card.pokemon.id) }}</span>
+
+          <span class="card__art-wrap">
+            <img
+              class="card__art"
+              [src]="card.pokemon.artworkUrl"
+              width="120"
+              height="120"
+              loading="lazy"
+              alt=""
+              aria-hidden="true"
+            />
+          </span>
+
+          <span class="card__ring" [attr.title]="'Total base stats: ' + card.pokemon.total">
+            <svg viewBox="0 0 64 64" width="52" height="52" aria-hidden="true">
+              <circle class="card__ring-track" cx="32" cy="32" r="26" />
+              <circle
+                class="card__ring-value"
+                cx="32"
+                cy="32"
+                r="26"
+                [attr.stroke-dasharray]="ringCircumference"
+                [style.--offset]="card.ringOffset"
+                [style.--full]="ringCircumference"
+              />
+            </svg>
+            <span class="card__ring-text">{{ card.pokemon.total }}</span>
+          </span>
+
+          <span class="card__name">{{ card.pokemon.name }}</span>
+          <span class="card__types">
+            @for (type of card.pokemon.types; track type) {
+              <app-type-badge [type]="type" />
+            }
+          </span>
+
+          <span class="card__bars" aria-hidden="true">
+            @for (bar of card.bars; track bar.label; let b = $index) {
+              <span class="bar" [style.--w]="bar.percent + '%'" [style.--b]="b">
+                <span class="bar__label">{{ bar.label }}</span>
+                <span class="bar__track"><span class="bar__fill"></span></span>
+                <span class="bar__value">{{ bar.value }}</span>
+              </span>
+            }
+          </span>
+        </button>
+      }
+    </div>
+  }
+}

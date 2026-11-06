@@ -70,6 +70,9 @@ src/app/
   18-type effectiveness chart, speed order (Guard has priority), accuracy, crits and damage from the real base stats. The page replays
   the resulting turn events with animations (lunge, hit flash, floating numbers, HP bars). Win streak is tracked, best streak persisted.
 - **Theme**: light theme driven by CSS custom properties in `src/styles.scss`.
+- **Cards view** (default) / **Table view**: the Pokédex can be shown as an animated card grid (staggered entry, floating artwork,
+  stat bars that fill in, a total-power progress ring, a "Discovered N / 1025" progress bar) or as the sortable table. The choice is
+  remembered in `localStorage`. Cards have a sort dropdown + direction toggle; both views share the same store, filters, pagination and states.
 - **Detail panel**: slide-in panel with an ECharts radar chart that animates between Pokémon.
 - **Forms**: reactive team form with required / 3–30 chars / debounced async unique-name validator, chips for 1–6 Pokémon,
   errors only after a field is dirty/touched (or after a submit attempt).
