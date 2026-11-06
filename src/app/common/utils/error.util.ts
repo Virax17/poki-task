@@ -4,7 +4,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 export class ApiError extends Error {
   constructor(
     message: string,
-    readonly cause?: unknown,
+    override readonly cause?: unknown,
   ) {
     super(message);
     this.name = 'ApiError';
