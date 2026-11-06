@@ -46,7 +46,7 @@
   }
 
   &__error {
-    color: #ff8f8f;
+    color: var(--color-error-text);
   }
 
   &__hint {

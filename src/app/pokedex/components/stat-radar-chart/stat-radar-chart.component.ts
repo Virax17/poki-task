@@ -62,10 +62,10 @@ export class StatRadarChartComponent {
             name: STAT_LABELS[key],
             max: MAX_STAT_VALUE,
           })),
-          axisName: { color: '#d0d4d4' },
+          axisName: { color: '#3c4350' },
           splitArea: { areaStyle: { color: ['transparent'] } },
-          splitLine: { lineStyle: { color: 'rgba(255,255,255,0.12)' } },
-          axisLine: { lineStyle: { color: 'rgba(255,255,255,0.12)' } },
+          splitLine: { lineStyle: { color: 'rgba(0,0,0,0.15)' } },
+          axisLine: { lineStyle: { color: 'rgba(0,0,0,0.15)' } },
         },
         series: [
           {

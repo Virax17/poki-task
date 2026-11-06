@@ -1,17 +1,20 @@
 // Global design tokens (see DEVELOPER_GUIDE.md §6 / §9)
 :root {
-  --color-primary: #ef5350;
+  --color-primary: #d32f2f;
   --color-secondary: #6c757d;
-  --color-accent: #ffb414;
-  --color-success: #2ecc71;
-  --color-danger: #ff5c5c;
+  --color-accent: #e08a00;
+  --color-success: #2e9e5b;
+  --color-danger: #d32f2f;
   --color-warning: #ffc107;
-  --color-surface: #131515;
-  --color-surface-2: #1e2121;
-  --color-surface-3: #272b2b;
-  --color-surface-overlay: rgba(19, 21, 21, 0.75);
-  --color-border: rgba(255, 255, 255, 0.1);
-  --color-text-muted: rgba(255, 255, 255, 0.62);
+  --color-surface: #f4f5f7;
+  --color-surface-2: #ffffff;
+  --color-surface-3: #eceff3;
+  --color-surface-overlay: rgba(255, 255, 255, 0.85);
+  --color-border: rgba(0, 0, 0, 0.12);
+  --color-text: #1c2024;
+  --color-text-muted: rgba(28, 32, 36, 0.65);
+  --color-error-text: #b3261e;
+  --color-hover: rgba(0, 0, 0, 0.05);
   --panel-width: 393px;
   --backdrop-blur: blur(16px);
   --radius: 10px;
@@ -25,13 +28,13 @@
 }
 
 html {
-  background-color: #111212;
+  background-color: #f4f5f7;
 }
 
 body {
-  color-scheme: dark;
-  background-color: var(--color-surface, #131515);
-  color: #ffffff;
+  color-scheme: light;
+  background-color: var(--color-surface, #f4f5f7);
+  color: var(--color-text);
   margin: 0;
   min-height: 100vh;
   font-family: var(--font-family);

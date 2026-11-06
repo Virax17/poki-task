@@ -29,7 +29,7 @@
       text-decoration: none;
 
       &.active {
-        color: #fff;
+        color: var(--color-text);
         background: var(--color-surface-3);
       }
     }
