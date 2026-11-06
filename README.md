@@ -37,6 +37,7 @@ npm run build               # production build
 
 ```
 src/app/
+  game/          "Who's that Pokémon?" mini-game (page, constants, models, utils)
   common/        shared UI (skeleton, state-message, pagination, type-badge, toasts), utils, constants, cache service
   core/          GraphqlClientService, LoggerService, ToastService
   pokedex/       models/ constants/ services/ state/ utils/ components/ + pokedex.component (page)
@@ -57,6 +58,10 @@ src/app/
   Components are standalone, `OnPush`, use `inject()`, `input()` and `output()`.
 - **UI states**: every async view (table, detail abilities, team list, team summary, typeahead dropdown) renders
   loading (skeleton, sized to avoid layout jumps), empty, error (message + Retry) and success.
+- **Game** (`/game`): "Who's that Pokémon?" — guess the silhouette from four names over 10 rounds (keys 1–4 to answer, N for next).
+  Reuses the cached Pokémon list via `PokemonStore.pool$`, has the same loading / error / empty states, scores streak bonuses
+  and keeps the best score in `localStorage`. Round generation is a pure, unit-tested util (`round-builder.util.ts`).
+- **Theme**: light theme driven by CSS custom properties in `src/styles.scss`.
 - **Detail panel**: slide-in panel with an ECharts radar chart that animates between Pokémon.
 - **Forms**: reactive team form with required / 3–30 chars / debounced async unique-name validator, chips for 1–6 Pokémon,
   errors only after a field is dirty/touched (or after a submit attempt).
