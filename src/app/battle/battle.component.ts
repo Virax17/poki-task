@@ -10,9 +10,10 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { concat, concatMap, defer, from, of, timer } from 'rxjs';
+import { ConfettiComponent } from '../common/components/confetti/confetti.component';
+import { PageBannerComponent } from '../common/components/page-banner/page-banner.component';
 import { SkeletonComponent } from '../common/components/skeleton/skeleton.component';
 import { StateMessageComponent } from '../common/components/state-message/state-message.component';
-import { TypeBadgeComponent } from '../common/components/type-badge/type-badge.component';
 import { CacheService } from '../common/services/cache.service';
 import { Pokemon } from '../pokedex/models/pokemon.model';
 import { PokemonPool } from '../pokedex/state/pokemon.selectors';
@@ -23,15 +24,16 @@ import {
   BATTLE_BEST_STREAK_KEY,
   FIGHTER_CHOICES,
   HIT_ANIMATION_MS,
+  INTRO_MS,
   MATCHMAKING_RANGE,
-  MOVES,
-  MOVE_ORDER,
 } from './constants/battle.constants';
 import { BattleState, FloatingText, MoveId, Side, TurnEvent } from './models/battle.model';
 import { BattleFighterComponent } from './components/battle-fighter/battle-fighter.component';
+import { BattleMovesComponent } from './components/battle-moves/battle-moves.component';
+import { BattleSelectComponent } from './components/battle-select/battle-select.component';
 import { capitalise, chooseOpponentMove, createCombatant, resolveTurn } from './utils/battle-engine.util';
 
-type Phase = 'select' | 'battle' | 'over';
+type Phase = 'select' | 'intro' | 'battle' | 'over';
 
 const LOADING_POOL: PokemonPool = { status: 'loading', error: null, pokemon: [] };
 
@@ -39,7 +41,15 @@ const LOADING_POOL: PokemonPool = { status: 'loading', error: null, pokemon: [] 
 @Component({
   selector: 'app-battle-page',
   standalone: true,
-  imports: [BattleFighterComponent, SkeletonComponent, StateMessageComponent, TypeBadgeComponent],
+  imports: [
+    BattleFighterComponent,
+    BattleMovesComponent,
+    BattleSelectComponent,
+    ConfettiComponent,
+    PageBannerComponent,
+    SkeletonComponent,
+    StateMessageComponent,
+  ],
   templateUrl: './battle.component.html',
   styleUrl: './battle.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -50,7 +60,6 @@ export class BattlePage {
   private readonly cache = inject(CacheService);
   private readonly destroyRef = inject(DestroyRef);
 
-  readonly moves = MOVE_ORDER.map((id) => MOVES[id]);
   readonly pool = toSignal(this.store.pool$, { initialValue: LOADING_POOL });
 
   // UI state
@@ -67,6 +76,7 @@ export class BattlePage {
   readonly attacking = signal<Side | null>(null);
   readonly hurt = signal<Side | null>(null);
   readonly floating = signal<FloatingText | null>(null);
+  readonly shake = signal(false);
   readonly artFailed = signal<Record<Side, boolean>>({ player: false, opponent: false });
 
   // Session stats
@@ -157,9 +167,10 @@ export class BattlePage {
 
   onKeydown(event: KeyboardEvent): void {
     if (this.phase() !== 'battle') return;
+    const moveIds: MoveId[] = ['quick', 'strike', 'blast', 'guard'];
     const index = Number(event.key) - 1;
-    if (Number.isInteger(index) && index >= 0 && index < this.moves.length) {
-      this.useMove(this.moves[index].id);
+    if (Number.isInteger(index) && index >= 0 && index < moveIds.length) {
+      this.useMove(moveIds[index]);
     }
   }
 
@@ -186,7 +197,15 @@ export class BattlePage {
     this.log.set([
       `A wild ${capitalise(state.opponent.pokemon.name)} appears! Go, ${capitalise(state.player.pokemon.name)}!`,
     ]);
-    this.phase.set('battle');
+    this.shake.set(false);
+    this.phase.set('intro');
+
+    // Let the "VS" overlay play, then hand control to the player.
+    timer(INTRO_MS)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        if (this.phase() === 'intro') this.phase.set('battle');
+      });
   }
 
   /** Lunge → apply damage/heal with a hit flash and floating number → settle. */
@@ -203,6 +222,7 @@ export class BattlePage {
         this.opponentHp.set(event.opponentHp);
         this.log.set([...this.log(), event.text].slice(-6));
 
+        if (event.crit) this.shake.set(true);
         if (event.damage > 0) {
           this.hurt.set(target);
           this.floating.set({
@@ -220,6 +240,7 @@ export class BattlePage {
       defer(() => {
         this.hurt.set(null);
         this.floating.set(null);
+        this.shake.set(false);
         return of(null);
       }),
     );

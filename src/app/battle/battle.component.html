@@ -1,13 +1,28 @@
 <section class="battle">
-  <h1 class="battle__title">Battle</h1>
+  <app-page-banner
+    theme="battle"
+    eyebrow="Battle arena"
+    title="Pick a fighter. Win the fight!"
+    subtitle="Type matchups, speed and a little luck decide who stands last."
+    [decor]="['⚔️', '🔥', '💥', '🏆', '⚡']"
+  >
+    @if (status() === 'success') {
+      <div class="battle__chips" aria-live="polite">
+        <span class="battle__chip">🏆 <strong>{{ wins() }}</strong> wins</span>
+        <span class="battle__chip">💀 <strong>{{ losses() }}</strong> losses</span>
+        <span class="battle__chip" [class.battle__chip--hot]="streak() >= 2">🔥 <strong>{{ streak() }}</strong> streak</span>
+        <span class="battle__chip">⭐ best <strong>{{ bestStreak() }}</strong></span>
+      </div>
+    }
+  </app-page-banner>
 
   @switch (status()) {
     @case ('loading') {
       <div class="battle__panel" aria-busy="true">
-        <app-skeleton width="200px" height="20px" />
-        <div class="battle__choices">
+        <app-skeleton width="220px" height="24px" />
+        <div class="battle__skeletons">
           @for (n of [1, 2, 3, 4, 5, 6, 7, 8]; track n) {
-            <app-skeleton width="100%" height="150px" />
+            <app-skeleton width="100%" height="190px" />
           }
         </div>
       </div>
@@ -23,36 +38,13 @@
       </div>
     }
     @default {
-      <div class="battle__stats" aria-live="polite">
-        <span>Wins <strong>{{ wins() }}</strong></span>
-        <span>Losses <strong>{{ losses() }}</strong></span>
-        <span>Win streak <strong>{{ streak() }}</strong></span>
-        <span>Best streak <strong>{{ bestStreak() }}</strong></span>
-      </div>
-
       @if (phase() === 'select') {
-        <div class="battle__panel">
-          <div class="battle__panel-head">
-            <h2>Choose your fighter</h2>
-            <button type="button" class="battle__ghost" (click)="rerollChoices()">Shuffle</button>
-          </div>
-          <div class="battle__choices">
-            @for (p of choices(); track p.id) {
-              <button type="button" class="battle__choice" (click)="startBattle(p)">
-                <img [src]="p.artworkUrl" width="96" height="96" loading="lazy" alt="" aria-hidden="true" />
-                <span class="battle__choice-name">{{ p.name }}</span>
-                <span class="battle__choice-types">
-                  @for (t of p.types; track t) {
-                    <app-type-badge [type]="t" />
-                  }
-                </span>
-                <span class="battle__choice-meta">HP {{ p.stats.hp }} · Spd {{ p.stats.speed }} · Total {{ p.total }}</span>
-              </button>
-            }
-          </div>
-        </div>
+        <app-battle-select [choices]="choices()" (picked)="startBattle($event)" (reroll)="rerollChoices()" />
       } @else if (battle(); as b) {
-        <div class="arena" [class.arena--over]="phase() === 'over'">
+        <div class="arena" [class.arena--over]="phase() === 'over'" [class.arena--shake]="shake()">
+          <span class="arena__cloud arena__cloud--a" aria-hidden="true"></span>
+          <span class="arena__cloud arena__cloud--b" aria-hidden="true"></span>
+
           <app-battle-fighter
             side="opponent"
             [combatant]="b.opponent"
@@ -73,6 +65,29 @@
             [floating]="floating()"
             (imageError)="onArtError('player')"
           />
+
+          @if (phase() === 'intro') {
+            <div class="vs" aria-hidden="true">
+              <span class="vs__side vs__side--l">
+                <img [src]="artFor('player')" width="140" height="140" alt="" />
+                <strong>{{ b.player.pokemon.name }}</strong>
+              </span>
+              <span class="vs__text">VS</span>
+              <span class="vs__side vs__side--r">
+                <img [src]="artFor('opponent')" width="140" height="140" alt="" />
+                <strong>{{ b.opponent.pokemon.name }}</strong>
+              </span>
+            </div>
+          }
+
+          @if (phase() === 'over') {
+            @if (winner() === 'player') {
+              <app-confetti [count]="52" />
+            }
+            <div class="ko" [class.ko--win]="winner() === 'player'" role="status">
+              {{ winner() === 'player' ? 'K.O.!' : 'Fainted…' }}
+            </div>
+          }
         </div>
 
         <ul class="log" aria-live="polite" aria-label="Battle log">
@@ -83,21 +98,18 @@
 
         @if (phase() === 'over') {
           <div class="result" [class.result--win]="winner() === 'player'" role="status">
-            <h2>{{ winner() === 'player' ? 'You win! 🎉' : 'You lost…' }}</h2>
+            <h2>{{ winner() === 'player' ? 'You win! 🎉' : 'You lost… 💫' }}</h2>
             <div class="result__actions">
               <button type="button" class="battle__primary" (click)="rematch()">Rematch</button>
               <button type="button" class="battle__ghost" (click)="chooseAnother()">New fighter</button>
             </div>
           </div>
         } @else {
-          <div class="moves">
-            @for (move of moves; track move.id; let i = $index) {
-              <button type="button" class="move" [class.move--guard]="move.kind === 'status'" [disabled]="busy()" (click)="useMove(move.id)">
-                <span class="move__name"><kbd>{{ i + 1 }}</kbd> {{ move.label }}</span>
-                <span class="move__desc">{{ move.description }}</span>
-              </button>
-            }
-          </div>
+          <app-battle-moves
+            [pokemon]="b.player.pokemon"
+            [disabled]="busy() || phase() === 'intro'"
+            (chosen)="useMove($event)"
+          />
         }
       }
     }

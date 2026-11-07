@@ -1,0 +1,24 @@
+<div class="moves" role="group" aria-label="Moves">
+  @for (move of moves(); track move.id; let i = $index) {
+    <button
+      type="button"
+      class="move"
+      [style.--mc]="move.color"
+      [style.--i]="i"
+      [disabled]="disabled()"
+      (click)="chosen.emit(move.id)"
+    >
+      <span class="move__icon" aria-hidden="true">{{ move.icon }}</span>
+      <span class="move__body">
+        <span class="move__name">
+          {{ move.label }}
+          @if (move.type) {
+            <span class="move__type">{{ move.type }}</span>
+          }
+        </span>
+        <span class="move__desc">{{ move.description }}</span>
+      </span>
+      <kbd class="move__key">{{ i + 1 }}</kbd>
+    </button>
+  }
+</div>

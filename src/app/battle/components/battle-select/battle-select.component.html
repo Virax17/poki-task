@@ -1,0 +1,36 @@
+<section class="select" aria-label="Choose your fighter">
+  <div class="select__head">
+    <h2>Choose your fighter</h2>
+    <button type="button" class="select__shuffle" (click)="reroll.emit()">🔀 Shuffle</button>
+  </div>
+
+  <div class="select__grid">
+    @for (p of choices(); track p.id; let i = $index) {
+      <button
+        type="button"
+        class="pick"
+        [style.--c1]="primary(p)"
+        [style.--c2]="secondary(p)"
+        [style.--i]="i"
+        [attr.aria-label]="'Choose ' + p.name"
+        (click)="picked.emit(p)"
+      >
+        <span class="pick__top">
+          <img class="pick__art" [src]="p.artworkUrl" width="110" height="110" loading="lazy" alt="" aria-hidden="true" />
+        </span>
+        <span class="pick__name">{{ p.name }}</span>
+        <span class="pick__types">
+          @for (t of p.types; track t) {
+            <app-type-badge [type]="t" />
+          }
+        </span>
+        <span class="pick__stats">
+          <span title="HP">❤️ {{ p.stats.hp }}</span>
+          <span title="Attack">⚔️ {{ p.stats.attack }}</span>
+          <span title="Speed">👟 {{ p.stats.speed }}</span>
+        </span>
+        <span class="pick__cta" aria-hidden="true">Fight!</span>
+      </button>
+    }
+  </div>
+</section>

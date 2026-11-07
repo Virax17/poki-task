@@ -37,6 +37,13 @@ export const MOVES: Readonly<Record<MoveId, Move>> = {
 
 export const MOVE_ORDER: readonly MoveId[] = ['quick', 'strike', 'blast', 'guard'];
 
+export const MOVE_ICONS: Readonly<Record<MoveId, string>> = {
+  quick: '⚡',
+  strike: '🥊',
+  blast: '💥',
+  guard: '🛡️',
+};
+
 export const FIGHTER_CHOICES = 8;
 /** Opponents are picked within this base-stat-total distance of the player's fighter when possible. */
 export const MATCHMAKING_RANGE = 120;
@@ -46,6 +53,8 @@ export const GUARD_HEAL_RATIO = 0.12;
 /** Delay between animation steps while a turn is replayed. */
 export const ATTACK_ANIMATION_MS = 450;
 export const HIT_ANIMATION_MS = 800;
+/** How long the "VS" intro overlay plays before the fight starts. */
+export const INTRO_MS = 2200;
 
 export const BATTLE_BEST_STREAK_KEY = 'miniPokedex.battleBestStreak';
 

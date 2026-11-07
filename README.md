@@ -62,13 +62,17 @@ src/app/
   Components are standalone, `OnPush`, use `inject()`, `input()` and `output()`.
 - **UI states**: every async view (table, detail abilities, team list, team summary, typeahead dropdown) renders
   loading (skeleton, sized to avoid layout jumps), empty, error (message + Retry) and success.
-- **Quiz** (`/game`): "Who's that Pokémon?" — guess the silhouette from four names over 10 rounds (keys 1–4 to answer, N for next).
-  Reuses the cached Pokémon list via `PokemonStore.pool$`, has the same loading / error / empty states, scores streak bonuses
-  and keeps the best score in `localStorage`. Round generation is a pure, unit-tested util (`round-builder.util.ts`).
+- **Quiz** (`/game`): "Who's that Pokémon?" — guess the silhouette from four names over 10 rounds. A 10-second timer drains (running out
+  counts as wrong), streaks add bonus points, and the finish screen gives a star rating with confetti. Keys 1–4 answer, N for next.
+  Reuses the cached Pokémon list via `PokemonStore.pool$`, has the same loading / error / empty states and keeps the best score in
+  `localStorage`. Round generation is a pure, unit-tested util (`round-builder.util.ts`).
 - **Battle** (`/battle`): turn-based 1v1. Pick one of 8 random fighters, face a similarly-strong random opponent and trade
   Quick Attack / Strike / Blast / Guard (keys 1–4). The rules live in a pure, unit-tested engine (`battle-engine.util.ts`):
   18-type effectiveness chart, speed order (Guard has priority), accuracy, crits and damage from the real base stats. The page replays
   the resulting turn events with animations (lunge, hit flash, floating numbers, HP bars). Win streak is tracked, best streak persisted.
+- **Fun pages**: Teams, Quiz and Battle share an animated `PageBannerComponent` (gradient header, floating emoji, stat chips) and a
+  `ConfettiComponent`. Teams has six visible slots that fill as you pick, gradient team cards and a summary with a power ring and
+  type-mix bar. Battle has a trading-card fighter select, a "VS" intro, type-coloured move buttons, screen shake on crits and a K.O. banner.
 - **Theme**: light theme driven by CSS custom properties in `src/styles.scss`.
 - **Pokédex layout**: a gradient hero banner (animated Poké Ball, "discovered" progress bar), a scrollable colour-coded **type rail**
   for filtering, and a floating glass **dock** with search (press `/` to focus), sort and the cards/table switch.
