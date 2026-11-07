@@ -1,0 +1,32 @@
+<div
+  class="stage"
+  [class.stage--correct]="revealed() && correct()"
+  [class.stage--wrong]="revealed() && !correct()"
+>
+  <span class="stage__rays" aria-hidden="true"></span>
+
+  <span class="stage__circle">
+    <img
+      class="stage__art"
+      [class.stage__art--hidden]="!revealed()"
+      [src]="artFailed() ? fallbackUrl() : artUrl()"
+      width="210"
+      height="210"
+      [alt]="revealed() ? name() : 'Silhouette of a mystery Pokémon'"
+      (error)="artFailed.set(true)"
+    />
+  </span>
+
+  @if (!revealed()) {
+    <span class="stage__q stage__q--a" aria-hidden="true">?</span>
+    <span class="stage__q stage__q--b" aria-hidden="true">?</span>
+  } @else if (correct()) {
+    @for (n of sparkles; track n) {
+      <span class="stage__spark" [style.--n]="n" aria-hidden="true">✨</span>
+    }
+  }
+
+  <div class="stage__timer" role="timer" aria-label="Time left this round">
+    <span class="stage__timer-fill" [class.stage__timer-fill--paused]="revealed()" [style.animation-duration.ms]="durationMs()"></span>
+  </div>
+</div>

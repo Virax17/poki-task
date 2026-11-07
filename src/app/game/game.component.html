@@ -1,99 +1,115 @@
-<section class="game">
-  <h1 class="game__title">Who's that Pokémon?</h1>
+<section class="quiz">
+  <app-page-banner
+    theme="quiz"
+    eyebrow="Quiz"
+    title="Who's that Pokémon?"
+    subtitle="Spot the silhouette before the clock runs out. Keep a streak for bonus points!"
+    [decor]="['❓', '💡', '⭐', '🎉']"
+  >
+    @if (status() === 'success' && !isFinished()) {
+      <div class="quiz__chips" aria-live="polite">
+        <span class="quiz__chip">Round <strong>{{ roundIndex() + 1 }}</strong>/{{ rounds().length }}</span>
+        <span class="quiz__chip">Score <strong>{{ score() }}</strong></span>
+        <span class="quiz__chip" [class.quiz__chip--hot]="streak() >= 2">🔥 <strong>{{ streak() }}</strong></span>
+        <span class="quiz__chip">Best <strong>{{ bestScore() }}</strong></span>
+      </div>
+    }
+  </app-page-banner>
 
   @switch (status()) {
     @case ('loading') {
-      <div class="game__card" aria-busy="true">
-        <app-skeleton width="220px" height="220px" [circle]="true" />
-        <div class="game__options">
+      <div class="quiz__card" aria-busy="true">
+        <app-skeleton width="100%" height="300px" />
+        <div class="quiz__options">
           @for (n of [1, 2, 3, 4]; track n) {
-            <app-skeleton width="100%" height="48px" />
+            <app-skeleton width="100%" height="56px" />
           }
         </div>
       </div>
     }
     @case ('error') {
-      <div class="game__card">
+      <div class="quiz__card">
         <app-state-message kind="error" title="Couldn't load Pokémon" [message]="pool().error ?? ''" (retry)="onRetry()" />
       </div>
     }
     @case ('empty') {
-      <div class="game__card">
-        <app-state-message kind="empty" title="Not enough Pokémon" message="The game needs a few Pokémon to play. Try again later." />
+      <div class="quiz__card">
+        <app-state-message kind="empty" title="Not enough Pokémon" message="The quiz needs a few Pokémon to play. Try again later." />
       </div>
     }
     @default {
       @if (isFinished()) {
-        <div class="game__card game__card--result">
-          <h2 class="game__result-title">Game over!</h2>
-          <p class="game__result-score">{{ score() }} <span>points</span></p>
+        <div class="quiz__card quiz__card--result">
+          @if (rating().stars >= 2) {
+            <app-confetti [count]="48" />
+          }
+          <h2 class="quiz__result-title">{{ rating().title }}</h2>
+          <div class="quiz__stars" [attr.aria-label]="rating().stars + ' out of 3 stars'">
+            @for (earned of stars(); track $index; let i = $index) {
+              <span class="quiz__star" [class.quiz__star--on]="earned" [style.--i]="i" aria-hidden="true">★</span>
+            }
+          </div>
+          <p class="quiz__result-score">{{ score() }} <span>points</span></p>
           <p>You got <strong>{{ correctCount() }}</strong> of {{ rounds().length }} right.</p>
           @if (isNewBest()) {
-            <p class="game__best game__best--new" role="status">New best score!</p>
+            <p class="quiz__best quiz__best--new" role="status">🏅 New best score!</p>
           } @else {
-            <p class="game__best">Best: {{ bestScore() }}</p>
+            <p class="quiz__best">Best: {{ bestScore() }}</p>
           }
-          <button type="button" class="game__primary" (click)="startGame()">Play again</button>
+          <button type="button" class="quiz__primary" (click)="startGame()">Play again</button>
         </div>
       } @else if (currentRound(); as round) {
-        <div class="game__stats" aria-live="polite">
-          <span>Round <strong>{{ roundIndex() + 1 }}</strong> / {{ rounds().length }}</span>
-          <span>Score <strong>{{ score() }}</strong></span>
-          <span>Streak <strong>{{ streak() }}</strong></span>
-          <span>Best <strong>{{ bestScore() }}</strong></span>
-        </div>
-
-        <div class="game__progress" aria-hidden="true">
-          <span [style.width.%]="(roundIndex() / rounds().length) * 100"></span>
-        </div>
-
-        <div class="game__card">
-          <div class="game__stage">
-            <img
-              class="game__art"
-              [class.game__art--hidden]="!isRevealed()"
-              [src]="artFailed() ? round.answer.spriteUrl : round.answer.artworkUrl"
-              width="220"
-              height="220"
-              [alt]="isRevealed() ? round.answer.name : 'Silhouette of a mystery Pokémon'"
-              (error)="artFailed.set(true)"
+        <!-- Re-created each round so the entrance animation and the timer restart -->
+        @for (key of [roundIndex()]; track key) {
+          <div class="quiz__card">
+            <app-quiz-stage
+              [artUrl]="round.answer.artworkUrl"
+              [fallbackUrl]="round.answer.spriteUrl"
+              [name]="round.answer.name"
+              [revealed]="isRevealed()"
+              [correct]="isRevealed() ? wasCorrect() : null"
+              [durationMs]="roundMs"
             />
-          </div>
 
-          <p class="game__prompt" role="status">
-            @if (!isRevealed()) {
-              Pick the name (or press 1–4)
-            } @else if (wasCorrect()) {
-              Correct! It's <strong>{{ round.answer.name }}</strong>.
-            } @else {
-              Oops — it was <strong>{{ round.answer.name }}</strong>.
-            }
-          </p>
+            <p class="quiz__prompt" role="status">
+              @if (!isRevealed()) {
+                Pick the name (or press 1–4)
+              } @else if (wasCorrect()) {
+                Correct! It's <strong>{{ round.answer.name }}</strong>
+                <span class="quiz__gain">+{{ gain() }}</span>
+              } @else if (timedOut()) {
+                ⏰ Time's up! It was <strong>{{ round.answer.name }}</strong>
+              } @else {
+                Oops — it was <strong>{{ round.answer.name }}</strong>
+              }
+            </p>
 
-          <div class="game__options">
-            @for (option of round.options; track option.id; let i = $index) {
-              <button
-                type="button"
-                class="game__option"
-                [class.game__option--correct]="optionState(option) === 'correct'"
-                [class.game__option--wrong]="optionState(option) === 'wrong'"
-                [class.game__option--dim]="optionState(option) === 'dim'"
-                [disabled]="isRevealed()"
-                (click)="choose(option)"
-              >
-                <kbd>{{ i + 1 }}</kbd> {{ option.name }}
-              </button>
-            }
-          </div>
+            <div class="quiz__options">
+              @for (option of round.options; track option.id; let i = $index) {
+                <button
+                  type="button"
+                  class="quiz__option"
+                  [style.--i]="i"
+                  [class.quiz__option--correct]="optionState(option) === 'correct'"
+                  [class.quiz__option--wrong]="optionState(option) === 'wrong'"
+                  [class.quiz__option--dim]="optionState(option) === 'dim'"
+                  [disabled]="isRevealed()"
+                  (click)="choose(option)"
+                >
+                  <kbd>{{ i + 1 }}</kbd> {{ option.name }}
+                </button>
+              }
+            </div>
 
-          <div class="game__next">
-            @if (isRevealed()) {
-              <button type="button" class="game__primary" (click)="next()">
-                {{ isLastRound() ? 'See results' : 'Next Pokémon →' }}
-              </button>
-            }
+            <div class="quiz__next">
+              @if (isRevealed()) {
+                <button type="button" class="quiz__primary" (click)="next()">
+                  {{ isLastRound() ? 'See results 🏁' : 'Next Pokémon →' }}
+                </button>
+              }
+            </div>
           </div>
-        </div>
+        }
       }
     }
   }
