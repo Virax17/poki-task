@@ -1,0 +1,50 @@
+@switch (state().status) {
+  @case ('error') {
+    <app-state-message kind="error" [message]="state().error ?? ''" (retry)="onRetry()" />
+  }
+  @case ('success') {
+    @if (!evolves()) {
+      <app-state-message kind="empty" message="This Pokémon does not evolve." />
+    } @else {
+      <ol class="chain" [style.--accent]="accent()" aria-label="Evolution chain">
+        @for (stage of state().stages; track $index; let s = $index) {
+          @if (s > 0) {
+            <li class="chain__arrow" aria-hidden="true" [style.--s]="s">
+              <svg viewBox="0 0 24 24" width="22" height="22">
+                <path d="M4 12h14M13 6l6 6-6 6" />
+              </svg>
+            </li>
+          }
+          <li class="chain__stage" [class.chain__stage--grid]="stage.length > 3">
+            @for (node of stage; track node.id; let n = $index) {
+              <button
+                type="button"
+                class="node"
+                [class.node--current]="node.id === pokemonId()"
+                [style.--d]="s * 2 + n"
+                [attr.aria-current]="node.id === pokemonId() ? 'true' : null"
+                [attr.aria-label]="node.name + (node.condition ? ', ' + node.condition : '')"
+                (click)="select(node)"
+              >
+                <span class="node__orb">
+                  <img [src]="artwork(node.id)" width="64" height="64" loading="lazy" alt="" aria-hidden="true" />
+                </span>
+                <span class="node__name">{{ node.name }}</span>
+                @if (node.condition) {
+                  <span class="node__condition">{{ node.condition }}</span>
+                }
+              </button>
+            }
+          </li>
+        }
+      </ol>
+    }
+  }
+  @default {
+    <div class="chain chain--loading" aria-busy="true">
+      @for (n of [1, 2, 3]; track n) {
+        <app-skeleton width="64px" height="64px" [circle]="true" />
+      }
+    </div>
+  }
+}
