@@ -17,6 +17,7 @@ import {
 import { DEFAULT_PAGE_SIZE, SEARCH_DEBOUNCE_MS } from '../../common/constants/constants';
 import { toErrorMessage } from '../../common/utils/error.util';
 import { POKEMON_FETCH_LIMIT } from '../constants/pokedex.constants';
+import { EvolutionNode } from '../models/evolution.model';
 import { PokedexView, PokemonState } from '../models/pokemon-state.model';
 import { Pokemon, PokemonAbility, SortKey } from '../models/pokemon.model';
 import { PokemonApiService } from '../services/pokemon-api.service';
@@ -54,6 +55,7 @@ export class PokemonStore {
   private readonly searchInput$ = new Subject<string>();
   private readonly searchRetry$ = new Subject<void>();
   private readonly abilitiesCache = new Map<number, PokemonAbility[]>();
+  private readonly evolutionCache = new Map<number, EvolutionNode[]>();
 
   /** View model (filtered → sorted → paged) for the Pokédex page. */
   readonly view$: Observable<PokedexView> = selectPokedexView$(this.state$);
@@ -193,6 +195,18 @@ export class PokemonStore {
     return this.api
       .getAbilities$(pokemonId)
       .pipe(tap((abilities) => this.abilitiesCache.set(pokemonId, abilities)));
+  }
+
+  /**
+   * Returns the evolution chain of a Pokémon, cached after the first successful fetch.
+   * @param pokemonId Pokémon id.
+   */
+  getEvolution$(pokemonId: number): Observable<EvolutionNode[]> {
+    const cached = this.evolutionCache.get(pokemonId);
+    if (cached) return of(cached);
+    return this.api
+      .getEvolutionChain$(pokemonId)
+      .pipe(tap((chain) => this.evolutionCache.set(pokemonId, chain)));
   }
 
   private wireSearch(): void {

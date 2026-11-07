@@ -7,7 +7,9 @@ import {
   MAX_SPECIES_ID,
   SEARCH_RESULT_LIMIT,
 } from '../constants/pokedex.constants';
+import { EvolutionNode, RawEvolutionSpecies } from '../models/evolution.model';
 import { Pokemon, PokemonAbility, RawAbility, RawPokemon } from '../models/pokemon.model';
+import { mapEvolutionChain } from '../utils/evolution.util';
 import { mapAbility, mapPokemon } from '../utils/pokemon-mapper.util';
 
 const POKEMON_FIELDS = /* GraphQL */ `
@@ -78,6 +80,35 @@ const GET_ABILITIES = /* GraphQL */ `
   }
 `;
 
+const GET_EVOLUTION_CHAIN = /* GraphQL */ `
+  query GetEvolutionChain($id: Int) {
+    pokemonspecies(where: { id: { _eq: $id } }) {
+      evolutionchain {
+        pokemonspecies(order_by: { id: asc }) {
+          id
+          name
+          evolves_from_species_id
+          pokemonevolutions {
+            min_level
+            min_happiness
+            time_of_day
+            item {
+              name
+            }
+            evolutiontrigger {
+              name
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+
+interface EvolutionData {
+  pokemonspecies: { evolutionchain: { pokemonspecies: RawEvolutionSpecies[] } | null }[];
+}
+
 interface PokemonListData {
   pokemon: RawPokemon[];
 }
@@ -144,6 +175,20 @@ export class PokemonApiService {
       .pipe(
         retryWithDelay(),
         map((data) => data.pokemonability.map(mapAbility)),
+      );
+  }
+
+  /**
+   * Fetches the evolution chain a Pokémon belongs to (species id equals Pokémon id for the base forms we list).
+   * @param pokemonId Pokémon id.
+   * @returns Every member of the chain; a single node when the Pokémon does not evolve.
+   */
+  getEvolutionChain$(pokemonId: number): Observable<EvolutionNode[]> {
+    return this.client
+      .execute$<EvolutionData>(POKEAPI_GRAPHQL_URL, GET_EVOLUTION_CHAIN, { id: pokemonId })
+      .pipe(
+        retryWithDelay(),
+        map((data) => mapEvolutionChain(data.pokemonspecies[0]?.evolutionchain?.pokemonspecies ?? [])),
       );
   }
 }
