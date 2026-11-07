@@ -1,0 +1,19 @@
+<header class="banner" [attr.data-theme]="theme()">
+  @for (emoji of decor(); track $index; let i = $index) {
+    <span class="banner__decor" [style.--i]="i" [style.right.%]="4 + i * 14" [style.top.%]="14 + (i % 2) * 38" aria-hidden="true">{{ emoji }}</span>
+  }
+
+  <div class="banner__text">
+    @if (eyebrow()) {
+      <p class="banner__eyebrow">{{ eyebrow() }}</p>
+    }
+    <h1 class="banner__title">{{ title() }}</h1>
+    @if (subtitle()) {
+      <p class="banner__sub">{{ subtitle() }}</p>
+    }
+  </div>
+
+  <div class="banner__slot">
+    <ng-content />
+  </div>
+</header>

@@ -1,0 +1,14 @@
+<div class="confetti" aria-hidden="true">
+  @for (piece of pieces.slice(0, count()); track $index) {
+    <span
+      class="confetti__piece"
+      [style.left.%]="piece.left"
+      [style.width.px]="piece.size"
+      [style.height.px]="piece.size * 1.6"
+      [style.background]="'hsl(' + piece.hue + ' 90% 58%)'"
+      [style.animation-delay.s]="piece.delay"
+      [style.animation-duration.s]="piece.duration"
+      [style.--spin.deg]="piece.spin"
+    ></span>
+  }
+</div>

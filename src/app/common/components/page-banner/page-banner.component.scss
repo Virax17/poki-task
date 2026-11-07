@@ -1,0 +1,115 @@
+.banner {
+  --b1: #1e88e5;
+  --b2: #00bfa5;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 26px 30px;
+  overflow: hidden;
+  border-radius: 24px;
+  color: #fff;
+  background: linear-gradient(120deg, var(--b1), var(--b2));
+  background-size: 170% 170%;
+  animation: shift 9s ease-in-out infinite alternate;
+  box-shadow: 0 14px 30px color-mix(in srgb, var(--b1) 35%, transparent);
+
+  &[data-theme='teams'] {
+    --b1: #1e88e5;
+    --b2: #00bfa5;
+  }
+
+  &[data-theme='quiz'] {
+    --b1: #7e57c2;
+    --b2: #ec407a;
+  }
+
+  &[data-theme='battle'] {
+    --b1: #e53935;
+    --b2: #fb8c00;
+  }
+
+  &__text {
+    position: relative;
+    z-index: 1;
+    max-width: 560px;
+    animation: rise 0.55s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  }
+
+  &__eyebrow {
+    margin: 0 0 2px;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    opacity: 0.85;
+  }
+
+  &__title {
+    margin: 0;
+    font-size: clamp(26px, 4vw, 38px);
+    line-height: 1.1;
+    font-weight: 900;
+    letter-spacing: -0.5px;
+  }
+
+  &__sub {
+    margin: 6px 0 0;
+    opacity: 0.92;
+  }
+
+  &__slot {
+    position: relative;
+    z-index: 1;
+    animation: rise 0.55s 0.12s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  }
+
+  &__decor {
+    position: absolute;
+    font-size: 30px;
+    opacity: 0.28;
+    animation: bob 4.5s ease-in-out infinite;
+    animation-delay: calc(var(--i) * -0.9s);
+    user-select: none;
+  }
+}
+
+@keyframes shift {
+  from {
+    background-position: 0% 50%;
+  }
+  to {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes bob {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-6deg);
+  }
+  50% {
+    transform: translateY(-14px) rotate(8deg);
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .banner {
+    padding: 20px;
+  }
+
+  .banner__decor {
+    display: none;
+  }
+}
