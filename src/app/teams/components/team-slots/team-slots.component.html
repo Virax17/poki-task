@@ -1,0 +1,22 @@
+<ul class="slots" [class.slots--invalid]="invalid()" aria-label="Team slots">
+  @for (slot of slots(); track $index; let i = $index) {
+    <li class="slot" [class.slot--filled]="!!slot" [style.--i]="i">
+      @if (slot; as p) {
+        <span class="slot__filled">
+          <img [src]="p.artworkUrl" width="64" height="64" [alt]="p.name" />
+          <span class="slot__name">{{ p.name }}</span>
+          <button
+            type="button"
+            class="slot__remove"
+            [attr.aria-label]="'Remove ' + p.name"
+            (click)="removed.emit(p.id)"
+          >
+            <img src="assets/icons/ic_close.svg" width="10" height="10" alt="" aria-hidden="true" />
+          </button>
+        </span>
+      } @else {
+        <span class="slot__empty" aria-label="Empty slot">{{ i + 1 }}</span>
+      }
+    </li>
+  }
+</ul>

@@ -1,15 +1,15 @@
 <section class="team-list" aria-label="Teams">
-  <h2 class="team-list__title">Your teams</h2>
+  <h2 class="team-list__title"><span aria-hidden="true">🎒</span> Your teams</h2>
 
   @switch (view().status) {
     @case ('loading') {
       <ul class="team-list__items" aria-busy="true">
         @for (n of skeletonCards; track n) {
-          <li class="team-list__card team-list__card--skeleton">
-            <app-skeleton width="140px" height="18px" />
-            <div class="team-list__sprites">
+          <li class="team team--skeleton">
+            <app-skeleton width="150px" height="20px" />
+            <div class="team__sprites">
               @for (s of [1, 2, 3, 4, 5, 6]; track s) {
-                <app-skeleton width="40px" height="40px" [circle]="true" />
+                <app-skeleton width="44px" height="44px" [circle]="true" />
               }
             </div>
           </li>
@@ -20,34 +20,56 @@
       <app-state-message kind="error" title="Couldn't load teams" [message]="view().error ?? ''" (retry)="retry.emit()" />
     }
     @case ('empty') {
-      <app-state-message kind="empty" title="No teams yet" message="Create your first team using the form." />
+      <app-state-message kind="empty" title="No teams yet" message="Pick up to six Pokémon and create your first team!" />
     }
     @default {
       <ul class="team-list__items">
-        @for (team of view().teams; track team.id) {
+        @for (team of view().teams; track team.id; let i = $index) {
           <li
-            class="team-list__card"
-            [class.team-list__card--selected]="team.id === selectedId()"
-            [class.team-list__card--pending]="team.pending"
+            class="team"
+            [class.team--selected]="team.id === selectedId()"
+            [class.team--pending]="team.pending"
+            [style.--grad]="gradient(i)"
+            [style.--i]="i"
           >
-            <button type="button" class="team-list__select" (click)="selected.emit(team)" [attr.aria-pressed]="team.id === selectedId()">
-              <span class="team-list__name">{{ team.name }}</span>
-              <span class="team-list__meta">
+            <button
+              type="button"
+              class="team__body"
+              [attr.aria-pressed]="team.id === selectedId()"
+              (click)="selected.emit(team)"
+            >
+              <span class="team__head">
+                <span class="team__name">{{ team.name }}</span>
+                <span class="team__count">{{ team.pokemonIds.length }}/{{ maxSize }}</span>
+              </span>
+              <span class="team__meta">
                 @if (team.pending) {
-                  Saving…
+                  <span class="team__saving">Saving…</span>
                 } @else {
                   {{ team.createdAt | date: 'mediumDate' }}
                 }
+                @if (team.id === selectedId()) {
+                  <span class="team__active">★ Active</span>
+                }
               </span>
-              <span class="team-list__sprites">
-                @for (id of team.pokemonIds; track $index) {
-                  <img [src]="spriteUrl(id)" width="40" height="40" loading="lazy" alt="" aria-hidden="true" />
+              <span class="team__sprites">
+                @for (id of team.pokemonIds; track $index; let s = $index) {
+                  <img
+                    class="team__sprite"
+                    [style.--s]="s"
+                    [src]="spriteUrl(id)"
+                    width="48"
+                    height="48"
+                    loading="lazy"
+                    alt=""
+                    aria-hidden="true"
+                  />
                 }
               </span>
             </button>
             <button
               type="button"
-              class="team-list__delete"
+              class="team__delete"
               [disabled]="team.pending"
               [attr.aria-label]="'Delete team ' + team.name"
               (click)="deleted.emit(team)"

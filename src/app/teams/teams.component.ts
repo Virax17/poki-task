@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { PageBannerComponent } from '../common/components/page-banner/page-banner.component';
 import { CacheService } from '../common/services/cache.service';
 import { TeamFormComponent } from './components/team-form/team-form.component';
 import { TeamListComponent } from './components/team-list/team-list.component';
@@ -11,7 +12,7 @@ import { TeamStore } from './state/team.store';
 @Component({
   selector: 'app-teams-page',
   standalone: true,
-  imports: [TeamFormComponent, TeamListComponent, TeamSummaryComponent],
+  imports: [PageBannerComponent, TeamFormComponent, TeamListComponent, TeamSummaryComponent],
   templateUrl: './teams.component.html',
   styleUrl: './teams.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

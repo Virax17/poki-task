@@ -1,11 +1,19 @@
 .teams {
-  &__title {
-    margin: 0 0 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+
+  &__chip {
+    display: inline-block;
+    padding: 5px 14px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(6px);
   }
 
   &__grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
     gap: 24px;
     align-items: start;
   }

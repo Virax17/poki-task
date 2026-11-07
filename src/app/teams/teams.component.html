@@ -1,5 +1,15 @@
 <section class="teams">
-  <h1 class="teams__title">Teams</h1>
+  <app-page-banner
+    theme="teams"
+    eyebrow="Team builder"
+    title="Assemble your dream team"
+    subtitle="Pick up to six Pokémon, name your squad and see how strong it is."
+    [decor]="['⭐', '🎒', '⚡', '🔥', '💧']"
+  >
+    @if (view(); as v) {
+      <span class="teams__chip"><strong>{{ v.teams.length }}</strong> {{ v.teams.length === 1 ? 'team' : 'teams' }} saved</span>
+    }
+  </app-page-banner>
 
   <div class="teams__grid">
     <div class="teams__col">

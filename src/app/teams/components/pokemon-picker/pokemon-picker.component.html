@@ -1,18 +1,4 @@
 <div class="picker">
-  @if (selected().length) {
-    <ul class="picker__chips" aria-label="Selected Pokémon">
-      @for (pokemon of selected(); track pokemon.id) {
-        <li class="picker__chip">
-          <img [src]="pokemon.spriteUrl" width="28" height="28" alt="" aria-hidden="true" />
-          <span>{{ pokemon.name }}</span>
-          <button type="button" [attr.aria-label]="'Remove ' + pokemon.name" (click)="removed.emit(pokemon.id)">
-            <img src="assets/icons/ic_close.svg" width="12" height="12" alt="" aria-hidden="true" />
-          </button>
-        </li>
-      }
-    </ul>
-  }
-
   <div class="picker__field" [class.picker__field--invalid]="invalid()">
     <img src="assets/icons/ic_search.svg" width="16" height="16" alt="" aria-hidden="true" />
     <input

@@ -13,11 +13,12 @@ import { TeamStore } from '../../state/team.store';
 import { itemCountValidator } from '../../validators/pokemon-count.validator';
 import { uniqueTeamNameValidator } from '../../validators/team-name.validator';
 import { PokemonPickerComponent } from '../pokemon-picker/pokemon-picker.component';
+import { TeamSlotsComponent } from '../team-slots/team-slots.component';
 
 @Component({
   selector: 'app-team-form',
   standalone: true,
-  imports: [ReactiveFormsModule, PokemonPickerComponent],
+  imports: [ReactiveFormsModule, PokemonPickerComponent, TeamSlotsComponent],
   templateUrl: './team-form.component.html',
   styleUrl: './team-form.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -42,7 +42,6 @@ export class PokemonPickerComponent {
   readonly invalid = input(false);
 
   readonly picked = output<Pokemon>();
-  readonly removed = output<number>();
   readonly blurred = output<void>();
 
   private readonly store = inject(PokemonStore);

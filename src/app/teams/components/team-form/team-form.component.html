@@ -1,5 +1,5 @@
 <form class="team-form" [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
-  <h2 class="team-form__title">Create a team</h2>
+  <h2 class="team-form__title"><span aria-hidden="true">✨</span> Create a team</h2>
 
   <div class="team-form__group">
     <label for="team-name">Team name</label>
@@ -31,14 +31,19 @@
   </div>
 
   <div class="team-form__group">
-    <label for="pokemon-picker">Pokémon ({{ pokemon.value.length }}/{{ maxTeamSize }})</label>
+    <label for="pokemon-picker">Pokémon <span class="team-form__count">{{ pokemon.value.length }}/{{ maxTeamSize }}</span></label>
+    <app-team-slots
+      [pokemon]="pokemon.value"
+      [max]="maxTeamSize"
+      [invalid]="showError(pokemon)"
+      (removed)="onRemoved($event)"
+    />
     <app-pokemon-picker
       inputId="pokemon-picker"
       [selected]="pokemon.value"
       [max]="maxTeamSize"
       [invalid]="showError(pokemon)"
       (picked)="onPicked($event)"
-      (removed)="onRemoved($event)"
       (blurred)="pokemon.markAsTouched()"
     />
     <div class="team-form__msg" aria-live="polite">
