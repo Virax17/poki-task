@@ -70,9 +70,14 @@ src/app/
   18-type effectiveness chart, speed order (Guard has priority), accuracy, crits and damage from the real base stats. The page replays
   the resulting turn events with animations (lunge, hit flash, floating numbers, HP bars). Win streak is tracked, best streak persisted.
 - **Theme**: light theme driven by CSS custom properties in `src/styles.scss`.
+- **Pokédex layout**: a gradient hero banner (animated Poké Ball, "discovered" progress bar), a scrollable colour-coded **type rail**
+  for filtering, and a floating glass **dock** with search (press `/` to focus), sort and the cards/table switch.
+- **Evolution chain** (detail panel): follows the chain via PokéAPI's species data, drawn left → right with animated nodes and arrows,
+  branches (e.g. Eevee) stacked, the current form highlighted. Clicking a form opens it. Requirement labels ("Lv. 16", "Use Fire stone",
+  "Friendship, day") come from a unit-tested util (`evolution.util.ts`). Has its own loading / error / empty ("does not evolve") states.
 - **Cards view** (default) / **Table view**: the Pokédex can be shown as an animated card grid (staggered entry, floating artwork,
   stat bars that fill in, a total-power progress ring, a "Discovered N / 1025" progress bar) or as the sortable table. The choice is
-  remembered in `localStorage`. Cards have a sort dropdown + direction toggle; both views share the same store, filters, pagination and states.
+  remembered in `localStorage`. The dock's sort dropdown applies to cards; both views share the same store, filters, pagination and states.
 - **Detail panel**: slide-in panel with an ECharts radar chart that animates between Pokémon.
 - **Forms**: reactive team form with required / 3–30 chars / debounced async unique-name validator, chips for 1–6 Pokémon,
   errors only after a field is dirty/touched (or after a submit attempt).

@@ -16,6 +16,7 @@ import { getTypeColor } from '../../../common/utils/type-colors.util';
 import { STAT_LABELS } from '../../constants/pokedex.constants';
 import { LoadStatus, Pokemon, PokemonAbility, STAT_KEYS } from '../../models/pokemon.model';
 import { PokemonStore } from '../../state/pokemon.store';
+import { EvolutionChainComponent } from '../evolution-chain/evolution-chain.component';
 import { StatRadarChartComponent } from '../stat-radar-chart/stat-radar-chart.component';
 
 interface AbilitiesState {
@@ -31,6 +32,7 @@ const IDLE_ABILITIES: AbilitiesState = { status: 'idle', data: [], error: null }
   selector: 'app-pokemon-detail-panel',
   standalone: true,
   imports: [
+    EvolutionChainComponent,
     SkeletonComponent,
     StateMessageComponent,
     TypeBadgeComponent,
@@ -44,6 +46,8 @@ export class PokemonDetailPanelComponent {
   readonly pokemon = input<Pokemon | null>(null);
   readonly open = input(false);
   readonly closed = output<void>();
+  /** Emits when the user picks another Pokémon from the evolution chain. */
+  readonly evolutionPicked = output<number>();
 
   private readonly store = inject(PokemonStore);
   private readonly retry$ = new Subject<void>();
@@ -62,6 +66,12 @@ export class PokemonDetailPanelComponent {
   readonly accent = computed(() => {
     const first = this.pokemon()?.types[0];
     return first ? getTypeColor(first) : '#ef5350';
+  });
+
+  readonly accent2 = computed(() => {
+    const types = this.pokemon()?.types ?? [];
+    const second = types[1] ?? types[0];
+    return second ? getTypeColor(second) : '#ff8a50';
   });
 
   /** Abilities for the selected Pokémon with loading / error / empty / success states. */

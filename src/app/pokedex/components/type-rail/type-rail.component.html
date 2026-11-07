@@ -1,0 +1,25 @@
+<div class="rail" role="group" aria-label="Filter by type">
+  <button
+    type="button"
+    class="chip chip--all"
+    [class.chip--active]="selected() === null"
+    [attr.aria-pressed]="selected() === null"
+    (click)="typeChange.emit(null)"
+  >
+    All
+  </button>
+
+  @for (type of types; track type; let i = $index) {
+    <button
+      type="button"
+      class="chip"
+      [class.chip--active]="selected() === type"
+      [style.--tc]="color(type)"
+      [style.--i]="i"
+      [attr.aria-pressed]="selected() === type"
+      (click)="toggle(type)"
+    >
+      <span class="chip__dot"></span>{{ type }}
+    </button>
+  }
+</div>

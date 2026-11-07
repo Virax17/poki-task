@@ -1,0 +1,25 @@
+<header class="hero">
+  <span class="hero__ball" aria-hidden="true"></span>
+  <span class="hero__bubble hero__bubble--a" aria-hidden="true"></span>
+  <span class="hero__bubble hero__bubble--b" aria-hidden="true"></span>
+
+  <div class="hero__text">
+    <p class="hero__eyebrow">Mini Pokédex</p>
+    <h1 class="hero__title">Gotta browse 'em all</h1>
+    <p class="hero__sub">Compare stats, follow evolutions and build your dream team.</p>
+  </div>
+
+  <div
+    class="hero__progress"
+    role="progressbar"
+    aria-label="Pokémon discovered"
+    [attr.aria-valuenow]="discovered()"
+    aria-valuemin="0"
+    [attr.aria-valuemax]="total()"
+  >
+    <span class="hero__progress-label">
+      <strong>{{ discovered() }}</strong> / {{ total() }} discovered
+    </span>
+    <span class="hero__progress-track"><span class="hero__progress-fill" [style.width.%]="percent()"></span></span>
+  </div>
+</header>

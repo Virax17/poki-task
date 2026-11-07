@@ -7,34 +7,46 @@
 >
   <div class="panel__close-row">
     <button type="button" class="panel__close-btn" aria-label="Close details" (click)="closed.emit()">
-      <img src="assets/icons/ic_arrow_left.svg" width="24" height="24" alt="" aria-hidden="true" />
+      <img src="assets/icons/ic_arrow_left.svg" width="22" height="22" alt="" aria-hidden="true" />
     </button>
   </div>
 
   @if (pokemon(); as p) {
-    <div class="panel__content">
-      <img class="panel__art" [src]="p.artworkUrl" width="160" height="160" [alt]="p.name" />
-      <h2 class="panel__title">
-        <span class="panel__id">#{{ p.id }}</span> {{ p.name }}
-      </h2>
-      <div class="panel__types">
-        @for (type of p.types; track type) {
-          <app-type-badge [type]="type" />
-        }
-      </div>
+    <!-- Re-created for every Pokémon so the entrance animation replays on each selection -->
+    @for (hero of [p]; track hero.id) {
+      <section class="hero" [style.--c1]="accent()" [style.--c2]="accent2()">
+        <span class="hero__number" aria-hidden="true">{{ hero.id }}</span>
+        <span class="hero__halo" aria-hidden="true"></span>
+        <img class="hero__art" [src]="hero.artworkUrl" width="170" height="170" [alt]="hero.name" />
+        <h2 class="hero__title">{{ hero.name }}</h2>
+        <div class="hero__types">
+          @for (type of hero.types; track type) {
+            <app-type-badge [type]="type" />
+          }
+        </div>
+      </section>
+    }
 
+    <div class="panel__content" [style.--accent]="accent()">
       <dl class="panel__facts">
         <div><dt>Height</dt><dd>{{ p.height / 10 }} m</dd></div>
         <div><dt>Weight</dt><dd>{{ p.weight / 10 }} kg</dd></div>
         <div><dt>Total</dt><dd>{{ p.total }}</dd></div>
       </dl>
 
+      <h3 class="panel__heading">Evolution</h3>
+      <app-evolution-chain
+        [pokemonId]="p.id"
+        [accent]="accent()"
+        (picked)="evolutionPicked.emit($event)"
+      />
+
       <h3 class="panel__heading">Base stats</h3>
       <app-stat-radar-chart [stats]="p.stats" [label]="p.name" [color]="accent()" />
 
       <ul class="panel__stats">
-        @for (row of statRows(); track row.label) {
-          <li>
+        @for (row of statRows(); track row.label; let i = $index) {
+          <li [style.--i]="i">
             <span>{{ row.label }}</span>
             <span class="panel__bar"><span [style.width.%]="row.percent" [style.background]="accent()"></span></span>
             <span class="panel__stat-value">{{ row.value }}</span>
@@ -52,8 +64,8 @@
             <app-state-message kind="empty" message="No abilities recorded for this Pokémon." />
           } @else {
             <ul class="panel__abilities">
-              @for (ability of abilities().data; track ability.name) {
-                <li>
+              @for (ability of abilities().data; track ability.name; let i = $index) {
+                <li [style.--i]="i">
                   <strong>{{ ability.name }}</strong>
                   @if (ability.isHidden) {
                     <span class="panel__hidden">hidden</span>

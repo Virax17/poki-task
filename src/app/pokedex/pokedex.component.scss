@@ -4,33 +4,19 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
-  transition: padding-right 0.3s ease;
+  transition: padding-right 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
 
-  &__title {
-    margin: 0;
-  }
-
-  &__progress {
+  // Floating control dock stays visible while scrolling
+  &__dock {
+    position: sticky;
+    bottom: 18px;
+    z-index: 12;
     display: flex;
-    align-items: center;
-    gap: 12px;
-    color: var(--color-text-muted);
-  }
+    justify-content: center;
+    pointer-events: none;
 
-  &__progress-track {
-    flex: 1;
-    height: 8px;
-    border-radius: 4px;
-    background: rgba(0, 0, 0, 0.08);
-    overflow: hidden;
-
-    span {
-      display: block;
-      height: 100%;
-      min-width: 4px;
-      border-radius: 4px;
-      background: linear-gradient(90deg, var(--color-primary), #ff8a50);
-      transition: width 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+    > * {
+      pointer-events: auto;
     }
   }
 

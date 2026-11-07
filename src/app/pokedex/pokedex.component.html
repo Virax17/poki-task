@@ -1,22 +1,8 @@
 <section class="pokedex" [class.pokedex--panel-open]="isPanelOpen()">
-  <h1 class="pokedex__title">Pokédex</h1>
-
   @if (view(); as v) {
-    <app-pokemon-filters
-      [typeFilter]="v.typeFilter"
-      [viewMode]="viewMode()"
-      [sortKey]="v.sortKey"
-      [sortDirection]="v.sortDirection"
-      (viewModeChange)="viewMode.set($event)"
-      (sortChange)="store.setSort($event)"
-      (searchChange)="store.setSearchTerm($event)"
-      (typeChange)="store.setTypeFilter($event)"
-    />
+    <app-pokedex-hero [discovered]="v.loadedCount" [total]="totalSpecies" />
 
-    <div class="pokedex__progress" role="progressbar" aria-label="Pokémon discovered" [attr.aria-valuenow]="v.loadedCount" aria-valuemin="0" [attr.aria-valuemax]="totalSpecies">
-      <span class="pokedex__progress-label">Discovered <strong>{{ v.loadedCount }}</strong> / {{ totalSpecies }}</span>
-      <span class="pokedex__progress-track"><span [style.width.%]="(v.loadedCount / totalSpecies) * 100"></span></span>
-    </div>
+    <app-type-rail [selected]="v.typeFilter" (typeChange)="store.setTypeFilter($event)" />
 
     @if (viewMode() === 'cards') {
       <app-pokemon-card-grid
@@ -64,11 +50,23 @@
         }
       </div>
     }
+
+    <div class="pokedex__dock">
+      <app-pokedex-dock
+        [viewMode]="viewMode()"
+        [sortKey]="v.sortKey"
+        [sortDirection]="v.sortDirection"
+        (searchChange)="store.setSearchTerm($event)"
+        (viewModeChange)="viewMode.set($event)"
+        (sortChange)="store.setSort($event)"
+      />
+    </div>
   }
 
   <app-pokemon-detail-panel
     [pokemon]="selectedPokemon()"
     [open]="isPanelOpen()"
     (closed)="closePanel()"
+    (evolutionPicked)="onEvolutionPicked($event)"
   />
 </section>
