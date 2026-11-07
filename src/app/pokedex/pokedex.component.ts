@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, effect, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  effect,
+  inject,
+  signal,
+  viewChild,
+} from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { CacheService } from '../common/services/cache.service';
 import { ToastService } from '../core/toast/toast.service';
@@ -38,6 +46,7 @@ export class PokedexPage {
   private readonly destroyRef = inject(DestroyRef);
 
   readonly totalSpecies = TOTAL_SPECIES;
+  private readonly dock = viewChild(PokedexDockComponent);
 
   /** Store selector bridged into the template. */
   readonly view = toSignal(this.store.view$, { requireSync: false });
@@ -72,6 +81,12 @@ export class PokedexPage {
         },
         error: (err: unknown) => this.toast.error(toErrorMessage(err)),
       });
+  }
+
+  /** Removes the search text and type filter. */
+  clearFilters(): void {
+    this.dock()?.clearSearch(false);
+    this.store.setTypeFilter(null);
   }
 
   closePanel(): void {

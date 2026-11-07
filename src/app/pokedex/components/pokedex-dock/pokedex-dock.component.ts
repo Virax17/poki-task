@@ -47,10 +47,14 @@ export class PokedexDockComponent {
     this.searchChange.emit(value);
   }
 
-  clearSearch(): void {
+  /**
+   * Empties the search box.
+   * @param refocus Whether to move focus back into the input (false when cleared from elsewhere).
+   */
+  clearSearch(refocus = true): void {
     this.text.set('');
     this.searchChange.emit('');
-    this.searchInput().nativeElement.focus();
+    if (refocus) this.searchInput().nativeElement.focus();
   }
 
   onSortSelect(event: Event): void {

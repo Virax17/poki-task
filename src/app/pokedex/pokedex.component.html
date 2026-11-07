@@ -4,6 +4,22 @@
 
     <app-type-rail [selected]="v.typeFilter" (typeChange)="store.setTypeFilter($event)" />
 
+    @if ((v.isSearching || v.typeFilter) && v.status !== 'loading') {
+      <div class="pokedex__filters" role="status">
+        <span>
+          Showing <strong>{{ v.totalFiltered }}</strong>
+          Pokémon
+          @if (v.isSearching) {
+            matching <q>{{ v.searchTerm }}</q>
+          }
+          @if (v.typeFilter) {
+            of type <strong>{{ v.typeFilter }}</strong>
+          }
+        </span>
+        <button type="button" class="pokedex__filters-clear" (click)="clearFilters()">Clear filters</button>
+      </div>
+    }
+
     @if (viewMode() === 'cards') {
       <app-pokemon-card-grid
         [view]="v"
