@@ -14,13 +14,13 @@ npm install
 Run the **mock server** (teams: queries + mutations) in one terminal:
 
 ```bash
-npm run mock        # json-graphql-server db.js --port 4000
+npm run mock        # node server.js -> http://localhost:4000
 ```
 
 Run the app in another terminal:
 
 ```bash
-npm start           # ng serve  ->  http://localhost:4200
+npm run start:frontend  # ng serve  ->  http://localhost:4200
 ```
 
 Other scripts:
@@ -29,6 +29,18 @@ Other scripts:
 npm test -- --watch=false   # unit tests (Vitest via Angular builder)
 npm run build               # production build
 ```
+
+## Deployment
+
+The Render Web Service should use:
+
+- Build command: `npm install --omit=dev`
+- Start command: `npm start` (or `npm run start:backend`)
+
+The backend listens on `process.env.PORT` (falling back to `4000`) and `0.0.0.0`.
+Set `GRAPHQL_API_URL` in Vercel to the public Render URL, for example
+`https://your-service.onrender.com`, and use `npm run build:vercel` as the Vercel build command.
+The Vercel output directory is `dist/mini-pokedex`.
 
 > Pokémon data comes from `https://graphql.pokeapi.co/v1beta2` (no auth), the maintained successor of the brief's
 > `beta.pokeapi.co/graphql/v1beta`, which was unreachable while building. Same data and operations; the only difference is
