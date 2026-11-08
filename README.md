@@ -40,7 +40,7 @@ The Render Web Service should use:
 The backend listens on `process.env.PORT` (falling back to `4000`) and `0.0.0.0`.
 Set `GRAPHQL_API_URL` in Vercel to the public Render URL, for example
 `https://your-service.onrender.com`, and use `npm run build:vercel` as the Vercel build command.
-The Vercel output directory is `dist/mini-pokedex`.
+The Vercel output directory is `dist/mini-pokedex/browser`.
 
 > Pokémon data comes from `https://graphql.pokeapi.co/v1beta2` (no auth), the maintained successor of the brief's
 > `beta.pokeapi.co/graphql/v1beta`, which was unreachable while building. Same data and operations; the only difference is

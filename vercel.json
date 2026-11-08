@@ -1,4 +1,4 @@
 {
   "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }],
-  "outputDirectory": "dist/mini-pokedex"
+  "outputDirectory": "dist/mini-pokedex/browser"
 }
