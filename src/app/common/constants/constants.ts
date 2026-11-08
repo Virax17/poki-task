@@ -4,7 +4,16 @@
 // The brief's beta.pokeapi.co/graphql/v1beta endpoint is currently unreachable; this is the maintained successor
 // (same data, tables without the `pokemon_v2_` prefix).
 export const POKEAPI_GRAPHQL_URL = 'https://graphql.pokeapi.co/v1beta2';
-export const MOCK_GRAPHQL_URL = 'http://localhost:4000';
+
+interface RuntimeConfig {
+  graphqlApiUrl?: string;
+}
+
+const runtimeConfig = (globalThis as typeof globalThis & {
+  __POKI_CONFIG__?: RuntimeConfig;
+}).__POKI_CONFIG__;
+
+export const MOCK_GRAPHQL_URL = runtimeConfig?.graphqlApiUrl ?? 'http://localhost:4000';
 
 // Resilience
 export const API_RETRY_COUNT = 3;

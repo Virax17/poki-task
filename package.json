@@ -3,11 +3,14 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "node server.js",
+    "start:frontend": "ng serve",
     "build": "ng build",
+    "build:vercel": "node scripts/write-runtime-config.js --require-env && ng build",
+    "start:backend": "node server.js",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "mock": "json-graphql-server db.js --port 4000"
+    "mock": "node server.js"
   },
   "private": true,
   "packageManager": "npm@11.17.0",
@@ -19,7 +22,10 @@
     "@angular/forms": "^21.2.0",
     "@angular/platform-browser": "^21.2.0",
     "@angular/router": "^21.2.0",
+    "cors": "^2.8.6",
     "echarts": "^6.1.0",
+    "express": "^5.2.1",
+    "json-graphql-server": "^3.3.2",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0"
   },
@@ -28,7 +34,6 @@
     "@angular/cli": "^21.2.29",
     "@angular/compiler-cli": "^21.2.0",
     "jsdom": "^28.0.0",
-    "json-graphql-server": "^3.3.2",
     "prettier": "^3.8.1",
     "typescript": "~5.9.2",
     "vitest": "^4.0.8"
