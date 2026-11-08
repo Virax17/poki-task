@@ -1,7 +1,7 @@
 import { StatKey } from '../models/pokemon.model';
 
-/** Number of Pokémon fetched per GraphQL request. */
-export const POKEMON_FETCH_LIMIT = 150;
+/** Number of Pokémon fetched per GraphQL request. Smaller batches render sooner. */
+export const POKEMON_FETCH_LIMIT = 60;
 
 /** Pokémon with ids above this value are alternate forms and are excluded. */
 export const MAX_SPECIES_ID = 10000;

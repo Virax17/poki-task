@@ -39,6 +39,8 @@
               width="120"
               height="120"
               loading="lazy"
+              decoding="async"
+              (error)="onArtworkError($event, card.pokemon.spriteUrl)"
               alt=""
               aria-hidden="true"
             />

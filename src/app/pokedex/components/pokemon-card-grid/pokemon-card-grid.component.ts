@@ -75,4 +75,9 @@ export class PokemonCardGridComponent {
   padId(id: number): string {
     return String(id).padStart(3, '0');
   }
+
+  onArtworkError(event: Event, fallbackUrl: string): void {
+    const image = event.currentTarget as HTMLImageElement | null;
+    if (image && image.src !== fallbackUrl) image.src = fallbackUrl;
+  }
 }
